@@ -1,0 +1,26 @@
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+repositories {
+	mavenCentral()
+}
+
+mainClassName = 'generator.AppGenerator'
+
+dependencies {
+	compile localGroovy()
+	compile group: 'commons-cli', name: 'commons-cli', version: '1.3.1'
+	compile group: 'org.apache.ant', name: 'ant', version: '1.9.7'
+}
+
+run {
+	args += ["--template-directory", "src/dist/template"]
+	
+	def projectProperties = gradle.startParameter.projectProperties
+	
+	["output-directory", "classes", "subprojects", "config-class"].each {
+		if (projectProperties.containsKey(it)) {
+			args += ["--$it", projectProperties[it]]
+		}
+	}
+}

@@ -1,0 +1,38 @@
+apply plugin: "java"
+apply plugin: "war"
+apply plugin: 'eu.appsatori.fatjar'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
+    }
+}
+
+repositories
+{
+        mavenCentral()
+}
+
+dependencies
+{
+	providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+	compile 'ch.qos.logback:logback-classic:1.1.7'
+  compile 'org.slf4j:slf4j-api:1.7.10'
+}
+
+compileJava {
+    options.fork = true
+    options.forkOptions.setMemoryMaximumSize("4g")
+}
+
+fatJar {
+    zip64 = true
+}
+
+project.ext.set("mainClass", "helpers.Main")
+
+build.dependsOn(fatJar)

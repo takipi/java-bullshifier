@@ -1,0 +1,38 @@
+subprojects
+{
+	apply plugin: "java"
+
+	repositories
+	{
+		mavenCentral()
+	}
+
+	task generateScripts(dependsOn:"jar") <<
+	{
+		if (!project.ext.has("mainClass"))
+		{
+			return
+		}
+		
+		def binDir = new File("$rootDir/bin")
+		binDir.mkdirs();
+		
+		def scriptFile = new File("$binDir/${projectDir.name}.sh")
+		def classPath = configurations.runtime.resolve()
+		classPath += jar.archivePath
+		def classPathStr = classPath.join(File.pathSeparator)
+		
+		def lines = 
+		[
+			"#!/bin/bash",
+			"",
+			"java -cp $classPathStr $mainClass",
+			""
+		]
+		
+		scriptFile.write(lines.join("\n"))
+		scriptFile.setExecutable(true)
+	}
+	
+	build.dependsOn("generateScripts")
+}
