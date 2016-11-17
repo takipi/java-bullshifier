@@ -1,9 +1,7 @@
 package generator;
 
-public class LogicGenerator
-{
-	static generate(methodName, context)
-	{
+public class LogicGenerator {
+	static generate(methodName, context) {
 		def method = new MethodBlock()
 		method.name = methodName
 		method.generate(context)
@@ -11,34 +9,29 @@ public class LogicGenerator
 		return method
 	}
 
-	static generateBlocks(context)
-	{
+	static generateBlocks(context) {
 		def body = new BodyBlock()
 		body.generate(context)
 
 		return body
 	}
 
-	static class Block
-	{
+	static class Block {
 		static currentId = 0
 
 		def parent
 		def id
 		def childIndex
 
-		def Block()
-		{
+		def Block() {
 			this.id = currentId++
 		}
 
-		def depth()
-		{
+		def depth() {
 			def counter = 0
 			def current = this
 
-			while (current)
-			{
+			while (current) {
 				counter++
 				current = current.parent
 			}
@@ -46,13 +39,11 @@ public class LogicGenerator
 			return counter
 		}
 
-		def path()
-		{
+		def path() {
 			def result = []
 			def current = this
 
-			while (current)
-			{
+			while (current) {
 				result += current
 				current = current.parent
 			}
@@ -60,74 +51,61 @@ public class LogicGenerator
 			return result
 		}
 
-		def scope()
-		{
+		def scope() {
 			def path = path()
 
 			return (path + path.collect({ it.nodesAbove() })).flatten().unique()
 		}
 
-		def nodesAbove()
-		{
-			if (!parent)
-			{
+		def nodesAbove() {
+			if (!parent) {
 				return []
 			}
 
 			return parent.nodesAbove(this)
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			return []
 		}
 	}
 
-	static class BodyBlock extends Block
-	{
+	static class BodyBlock extends Block {
 		def body = [:]
 
-		def generate(context)
-		{
+		def generate(context) {
 			def shouldGenerateMoreBlocks = Utils.rand.nextBoolean()
 			def depth = depth()
 
-			if (depth > 1 && (depth >= Config.maxBlocksDepth || !shouldGenerateMoreBlocks))
-			{
+			if (depth > 1 && (depth >= Config.maxBlocksDepth || !shouldGenerateMoreBlocks)) {
 				def special = new SpecialBlock()
 
 				special.parent = this
 				special.generate(context)
 
 				this.body = [(special.id):(special)]
-			}
-			else
-			{
+			} else {
 				def blocksCount = Utils.rand.nextInt(Config.minBlocksPerMethod + Config.maxBlocksPerMethod) + Config.minBlocksPerMethod
 
-				for (def i = 0; i < blocksCount; i++)
-				{
+				for (def i = 0; i < blocksCount; i++) {
 					def block = randomBlock()
 					addBlock(block)
 				}
 
-				this.body.each
-				{
+				this.body.each {
 					it.value.generate(context);
 				}
 			}
 		}
 
-		def addBlock(block)
-		{
+		def addBlock(block) {
 			this.body[block.id] = block
 
 			block.childIndex = this.body.size()
 			block.parent = this
 		}
 
-		def randomBlock()
-		{
+		def randomBlock() {
 			def block = Utils.rand.nextInt(6)
 
 			switch (block)
@@ -142,8 +120,7 @@ public class LogicGenerator
 			}
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}{"
 			body.each
@@ -154,24 +131,20 @@ public class LogicGenerator
 			return result
 		}
 
-		def nodesAbove(child)
-		{
+		def nodesAbove(child) {
 			return body.collect({ it.value }).grep({ it.childIndex < child.childIndex })
 		}
 	}
 
-	static class VarHolder extends BodyBlock
-	{
+	static class VarHolder extends BodyBlock {
 		def var
 	}
 
-	static class MethodBlock extends BodyBlock
-	{
+	static class MethodBlock extends BodyBlock {
 		def name
 		def body
 
-		def generate(context)
-		{
+		def generate(context) {
 			super.generate(context)
 
 			def returnBlock = new ReturnBlock()
@@ -179,8 +152,7 @@ public class LogicGenerator
 			returnBlock.generate(context)
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}public static long $name()"
 			result += super.print(tabs)
@@ -188,28 +160,24 @@ public class LogicGenerator
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "method"
 		}
 	}
 
-	static class ForBlock extends BodyBlock
-	{
+	static class ForBlock extends BodyBlock {
 		def from
 		def to
 		def loopIndex
 
-		def generate(context)
-		{
+		def generate(context) {
 			super.generate(context)
 			this.from = Utils.rand.nextInt(Config.maxLoopStart + 1)
 			this.to = Utils.rand.nextInt(Config.maxLoopEnd) + from
 			this.loopIndex = "loopIndex${depth()}$id"
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}int $loopIndex = 0;"
 			result += "${tabs}for ($loopIndex = $from; $loopIndex < $to; $loopIndex++)"
@@ -218,70 +186,59 @@ public class LogicGenerator
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "for"
 		}
 	}
 
-	static class ElseIfBlock extends BodyBlock
-	{
+	static class ElseIfBlock extends BodyBlock {
 		def body
 		def condition
 
-		def generate(context)
-		{
+		def generate(context) {
 			super.generate(context)
 			this.condition = generateCondition(this)
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}else if ($condition)"
 			result += super.print(tabs)
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "elsif"
 		}
 	}
 
-	static class ElseBlock extends BodyBlock
-	{
+	static class ElseBlock extends BodyBlock {
 		def body
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}else"
 			result += super.print(tabs)
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "else"
 		}
 	}
 
-	static class IfBlock extends BodyBlock
-	{
+	static class IfBlock extends BodyBlock {
 		def condition
 		def elseIfBlocks = []
 		def elseBlock
 
-		def generate(context)
-		{
+		def generate(context) {
 			super.generate(context)
 			this.condition = generateCondition(this)
 
 			def shouldGenerateElseBlock = Utils.rand.nextBoolean()
 
-			if (shouldGenerateElseBlock)
-			{
+			if (shouldGenerateElseBlock) {
 				this.elseBlock = new ElseBlock()
 				this.elseBlock.parent = this.parent
 				this.elseBlock.generate(context)
@@ -289,8 +246,7 @@ public class LogicGenerator
 
 			def elseIfBlockCount = Utils.rand.nextInt(Config.maxElseIfBlocks)
 
-			for (def i = 0; i < elseIfBlockCount; i++)
-			{
+			for (def i = 0; i < elseIfBlockCount; i++) {
 				def elseIfBlock = new ElseIfBlock()
 				elseIfBlock.parent = this.parent
 				elseIfBlock.generate(context)
@@ -298,19 +254,16 @@ public class LogicGenerator
 			}
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}if ($condition)"
 			result += super.print(tabs)
 
-			for (def elseIfBlock : elseIfBlocks)
-			{
+			for (def elseIfBlock : elseIfBlocks) {
 				result += elseIfBlock.print(tabs)
 			}
 
-			if (elseBlock)
-			{
+			if (elseBlock) {
 				result += elseBlock.print(tabs)
 			}
 
@@ -318,29 +271,25 @@ public class LogicGenerator
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "if"
 		}
 	}
 
-	static class WhileBlock extends BodyBlock
-	{
+	static class WhileBlock extends BodyBlock {
 		def body
 		def loopIndex
 		def from
 		def to
 
-		def generate(context)
-		{
+		def generate(context) {
 			super.generate(context)
 			this.loopIndex = "whileIndex${depth()}${id}"
 			this.from = Utils.rand.nextInt(Config.maxLoopStart + 1)
 			this.to = Utils.rand.nextInt(Config.maxLoopEnd) + from
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}long $loopIndex = $from;"
 			result += "${tabs}"
@@ -350,95 +299,80 @@ public class LogicGenerator
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "while"
 		}
 	}
 
-	static class CatchBlock extends BodyBlock
-	{
+	static class CatchBlock extends BodyBlock {
 		def var
 
-		def generate(context)
-		{
+		def generate(context) {
 			this.var = "ex${depth()}$id"
 		}
-		def print(tabs)
-		{
+		
+		def print(tabs) {
 			def result = []
 			result += "${tabs}catch (Exception $var)"
 			result += super.print(tabs)
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "catch"
 		}
 	}
 
-	static class FinallyBlock extends BodyBlock
-	{
-		def print(tabs)
-		{
+	static class FinallyBlock extends BodyBlock {
+		def print(tabs) {
 			def result = []
 			result += "${tabs}finally"
 			result += super.print(tabs)
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "finally"
 		}
 	}
 
-	static class TryBlock extends BodyBlock
-	{
+	static class TryBlock extends BodyBlock {
 		def catchBlock
 		def finallyBlock
 
-		def generate(context)
-		{
+		def generate(context) {
 			super.generate(context)
 
 			def shouldGenerateCatchBlock = Utils.rand.nextBoolean()
 			def shouldGenerateFinallyBlock = Utils.rand.nextBoolean()
 
-			if (!shouldGenerateCatchBlock)
-			{
+			if (!shouldGenerateCatchBlock) {
 				shouldGenerateFinallyBlock = true
 			}
 
-			if (shouldGenerateCatchBlock)
-			{
+			if (shouldGenerateCatchBlock) {
 				this.catchBlock = new CatchBlock()
 				this.catchBlock.parent = this.parent
 				this.catchBlock.generate(context)
 			}
 
-			if (shouldGenerateFinallyBlock)
-			{
+			if (shouldGenerateFinallyBlock) {
 				this.finallyBlock = new FinallyBlock()
 				this.finallyBlock.parent = this.parent
 				this.finallyBlock.generate(context)
 			}
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}try"
 			result += super.print(tabs)
 
-			if (catchBlock)
-			{
+			if (catchBlock) {
 				result += catchBlock.print(tabs)
 			}
 
-			if (finallyBlock)
-			{
+			if (finallyBlock) {
 				result += finallyBlock.print(tabs)
 			}
 
@@ -446,151 +380,124 @@ public class LogicGenerator
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "try"
 		}
 	}
 
-	static class VarBlock extends VarHolder
-	{
+	static class VarBlock extends VarHolder {
 		def value
 
-		def generate(context)
-		{
+		def generate(context) {
 			this.var = Utils.generateName("var");
 			this.value = generateValue(this.parent)
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}long $var = $value;"
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "var"
 		}
 	}
 
-	static class CallBlock extends VarHolder
-	{
+	static class CallBlock extends VarHolder {
 		def function
 
-		def generate(context)
-		{
+		def generate(context) {
 			var = Utils.generateName("ret")
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}$var = call"
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "call"
 		}
 	}
 
-	static class ReturnBlock extends Block
-	{
+	static class ReturnBlock extends Block {
 		def value
 
-		def generate(context)
-		{
+		def generate(context) {
 			this.value = generateValue(this)
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			result += "${tabs}return $value;"
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "call"
 		}
 	}
 
-	static class AssignBlock extends VarHolder
-	{
+	static class AssignBlock extends VarHolder {
 		def value
 
-		def generate(context)
-		{
+		def generate(context) {
 			def scopedVars = scope().grep({ it instanceof VarHolder }).collect({ it.var }).grep({ it })
 
-			if (scopedVars)
-			{
+			if (scopedVars) {
 				var = scopedVars[Utils.rand.nextInt(scopedVars.size())]
 
-				if (var)
-				{
+				if (var) {
 					value = generateValue(this)
 				}
 			}
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 
-			if (var)
-			{
+			if (var) {
 				result += "${tabs}$var = $value;"
 			}
 
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "assign"
 		}
 	}
 
-	static class SpecialBlock extends Block
-	{
+	static class SpecialBlock extends Block {
 		def code
 
-		def generate(context)
-		{
+		def generate(context) {
 			this.code = SpecialLogic.generateSpecial()
 		}
 
-		def print(tabs)
-		{
+		def print(tabs) {
 			def result = []
 			def codeStr = this.code.join("\n$tabs")
 			result += "$tabs$codeStr"
 			return result
 		}
 
-		public String toString()
-		{
+		public String toString() {
 			return "special"
 		}
 	}
 
-	static generateCondition(parent)
-	{
+	static generateCondition(parent) {
 		def value = generateValue(parent, 2)
 		def num = Utils.rand.nextInt(1000000) + 1
 
 		return "($value % $num) == 0"
 	}
 
-	static generateValue(parent, maxLength = Config.maxExpressionLength)
-	{
-		def leafers =
-		[
+	static generateValue(parent, maxLength = Config.maxExpressionLength) {
+		def leafers = [
 			{
 				def from = Utils.rand.nextInt(10)
 				def to = Utils.rand.nextInt(1000) + from
@@ -619,17 +526,14 @@ public class LogicGenerator
 		def first = true
 		def result = ""
 
-		(0..expressionLength).each
-		{
+		(0..expressionLength).each {
 			def leaf = leafers[Utils.rand.nextInt(leafers.size())]()
 
-			while (!leaf)
-			{
+			while (!leaf) {
 				leaf = leafers[Utils.rand.nextInt(leafers.size())]()
 			}
 
-			if (!first)
-			{
+			if (!first) {
 				result += " "
 				result += operators[Utils.rand.nextInt(operators.size())]
 				result += " "

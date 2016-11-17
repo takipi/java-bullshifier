@@ -1,17 +1,14 @@
 package generator;
 
-public class MultiSwitcherGenerator
-{
-	private static write(outputDir, projectNames)
-	{
+public class MultiSwitcherGenerator {
+	private static write(outputDir, projectNames) {
 		def switcherClassFile = new File("$outputDir/generated/MultiSwitcher.java")
 
 		switcherClassFile.parentFile.mkdirs()
 
 		def counter = 0
 
-		def cases = projectNames.collect(
-		{
+		def cases = projectNames.collect({
 			def projectName = it
 
 			return "case ${counter++}: generated.Switcher${projectName}.call(); return;"

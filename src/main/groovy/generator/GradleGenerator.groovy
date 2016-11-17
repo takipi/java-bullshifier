@@ -1,9 +1,7 @@
 package generator;
 
-public class GradleGenerator
-{
-	private static write(outputDirectory, subProjects, mainClass)
-	{
+public class GradleGenerator {
+	private static write(outputDirectory, subProjects, mainClass) {
 		def settingsGradleFile = new File("$outputDirectory/build.gradle")
 
 		def subProjectsDeps = subProjects.collect({ "project(':$it')" }).join(",\n\t")

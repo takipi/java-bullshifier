@@ -1,21 +1,17 @@
 package generator;
 
-public class EntryPointGenerator
-{
-	private static write(outputDir, switcherClassName)
-	{
+public class EntryPointGenerator {
+	private static write(outputDir, switcherClassName) {
 		writeEntrypointSwitcher(outputDir)
 		writeEntrypointsCallable(outputDir, switcherClassName)
 	}
 
-	private static writeEntrypointSwitcher(outputDir)
-	{
+	private static writeEntrypointSwitcher(outputDir) {
 		def entrypointSwitcherFile = new File("$outputDir/generated/EntrypointSwitcher.java")
 		entrypointSwitcherFile.write(generateEntrypointSwitcher())
 	}
 
-	private static generateEntrypointSwitcher()
-	{
+	private static generateEntrypointSwitcher() {
 		def lines = "";
 
 		lines += "package generated;\n"
@@ -41,22 +37,18 @@ public class EntryPointGenerator
 		return lines
 	}
 
-	private static writeEntrypointsCallable(outputDir, switcherClassName)
-	{
-		for (int i = 1; i <= Config.entryPointNum; i++)
-		{
+	private static writeEntrypointsCallable(outputDir, switcherClassName) {
+		for (int i = 1; i <= Config.entryPointNum; i++) {
 			def entrypointCallableFile = new File("$outputDir/generated/EntrypointCallable${i}.java")
 
 			entrypointCallableFile.write(generateEntrypointsCallable(i, switcherClassName))
 		}
 	}
 
-	private static addCallToSwitcher(i, switcherClassName)
-	{
+	private static addCallToSwitcher(i, switcherClassName) {
 		def lines = "";
 
-		if (i % 2 == 0)
-		{
+		if (i % 2 == 0) {
 			lines += "		try\n"
 			lines += "		{\n"
 			lines += "			${switcherClassName}.call();\n"
@@ -65,17 +57,14 @@ public class EntryPointGenerator
 			lines += "		{\n"
 			lines += "			e.printStackTrace();\n"
 			lines += "		}\n"
-		}
-		else 
-		{
+		} else {
 			lines += "		${switcherClassName}.call();\n"
 		}
 
 		return lines
 	}
 
-	private static generateEntrypointsCallable(i, switcherClassName)
-	{
+	private static generateEntrypointsCallable(i, switcherClassName) {
 		def lines = "";
 		lines += "package generated;\n"
 		lines += "\n"
@@ -95,12 +84,10 @@ public class EntryPointGenerator
 		return lines
 	}
 
-	private static addCases()
-	{
+	private static addCases() {
 		def lines = "";
 
-		for (int i = 1; i <= Config.entryPointNum; i++)
-		{
+		for (int i = 1; i <= Config.entryPointNum; i++) {
 			lines += "			case ${i}: return new EntrypointCallable${i}();\n"
 		}
 
