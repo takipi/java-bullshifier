@@ -14,20 +14,22 @@
 
 
 ## Run settings
-* `./gradlew run` (Default parameters, generates one jar with 10 classes)
-* Compile (`gradle fatJar`) and run the jar in the target folder
-* There are 2 predefined scripts: `small.sh`, and `big.sh`, with preconfigured run settings.
+* `./gradlew run` (default parameters, generates one jar with 10 classes)
+* `cd output && gradle fatJar` to build the generated project
+* `java -cp output/build/libs/tester.jar helpers.Main` to run it
+
+Or, you can simply run `./scripts/small.sh`, or `./scripts/big.sh`, with preconfigured run settings.
 
 
 ## Flags
-* `-Poutput-directory` (Relative path to output directory)
+* `-Poutput-directory` (relative path to output directory)
 * `-Poutput-classes` (number of classes to generate)
 * `-Psubprojects` (number of jars to generate)
 
 Keep in mind that generating over 500 classes will take quite some time. Our biggest run had 20,000 classes, but it's better to keep this under 5,000.
 
 ## Running sub projects
-* `/gradle build` (get a WAR file)
+* `gradle build` (get a WAR file)
 * Go to `bin`
 * A shell script is created per project, root will run them all
 
