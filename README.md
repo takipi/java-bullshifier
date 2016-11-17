@@ -1,4 +1,6 @@
-# java-bullshifier
+# About
+
+An open source project by [OverOps](https://www.overops.com).
 
 ![alt 'Java Bullishifier'](http://blog.takipi.com/wp-content/uploads/2016/11/bullishifier.png)
 
