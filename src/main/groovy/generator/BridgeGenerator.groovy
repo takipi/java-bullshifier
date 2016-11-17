@@ -1,9 +1,7 @@
 package generator;
 
-public class BridgeGenerator
-{
-	private static generate(classes)
-	{
+public class BridgeGenerator {
+	private static generate(classes) {
 		def lines = []
 
 		def swtichMethods = randomMethods(classes, Config.bridgeSwitchSize)
@@ -19,17 +17,14 @@ public class BridgeGenerator
 		return lines
 	}
 
-	private static randomMethods(classes, bridgeSwitchSize)
-	{
-		return (0..bridgeSwitchSize).collect(
-		{
+	private static randomMethods(classes, bridgeSwitchSize) {
+		return (0..bridgeSwitchSize).collect({
 			def classIndex = Utils.rand.nextInt(classes.size())
 			return classes[classIndex].randomMethod()
 		})
 	}
 
-	private static addSwitch(swtichMethods)
-	{
+	private static addSwitch(swtichMethods) {
 		def switcher = [
 			"switch (methodToCall)",
 			"{"
@@ -37,8 +32,7 @@ public class BridgeGenerator
 
 		int counter = 0
 
-		swtichMethods.each(
-		{
+		swtichMethods.each({
 			switcher += "\tcase (${counter++}): ${it.owner.qualifyName()}.${it.name}(context); return;"
 		})
 		

@@ -3,54 +3,43 @@ package generator;
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
-public class AppGenerator
-{
+public class AppGenerator {
 	private static scriptFile
 	private static commandLineOptions
 
-	public static main(args)
-	{
+	public static main(args) {
 		initialize();
 
 		def commandLine = commandLineOptions.parse(args)
 
-		if (commandLine.help)
-		{
+		if (commandLine.help) {
 			println commandLineOptions.usage()
 			System.exit(0)
 		}
 
-		if (commandLine."output-directory")
-		{
+		if (commandLine."output-directory") {
 			Config.rootDirectory = new File(commandLine."output-directory")
-		}
-		else
-		{
+		} else {
 			Config.rootDirectory = new File("output")
 		}
 
-		if (commandLine."classes")
-		{
+		if (commandLine."classes") {
 			Config.classesCount = Integer.parseInt(commandLine."classes")
 		}
 
-		if (commandLine."subprojects")
-		{
+		if (commandLine."subprojects") {
 			Config.subprojectsCount = Integer.parseInt(commandLine."subprojects")
 		}
 
-		if (commandLine."config-class")
-		{
+		if (commandLine."config-class") {
 			Config.configClassToUse = commandLine."config-class"
 		}
 
-		if (commandLine."template-directory")
-		{
+		if (commandLine."template-directory") {
 			Config.templateDirectory = commandLine."template-directory"
 		}
 
-		if (!Config.rootDirectory.isDirectory())
-		{
+		if (!Config.rootDirectory.isDirectory()) {
 			Config.rootDirectory.mkdirs()
 		}
 
@@ -58,34 +47,28 @@ public class AppGenerator
 
 		println "Start generating $Config.subprojectsCount projects"
 
-		if (isMultiProject)
-		{
+		if (isMultiProject) {
 			Utils.ant.delete(dir:Config.rootDirectory)
 			Config.rootDirectory.mkdirs()
 			generateSubProjects(Config.rootDirectory, Config.subprojectsCount)
-		}
-		else
-		{
+		} else {
 			generateProject(Config.rootDirectory, "")
 		}
 
 		println "Done All!"
 	}
 
-	private static generateSubProjects(rootDirectory, subprojectsCount)
-	{
+	private static generateSubProjects(rootDirectory, subprojectsCount) {
 		def projectNames = []
 
-		(1..subprojectsCount).each
-		{
+		(1..subprojectsCount).each {
 			def projectName = Utils.generateName("Proj")
 
 			generateProject(Config.rootDirectory, projectName)
 			projectNames += projectName
 		}
 
-		Utils.ant.copy(todir:"$rootDirectory", overwrite:false)
-		{
+		Utils.ant.copy(todir:"$rootDirectory", overwrite:false) {
 			fileset(dir:"$Config.templateDirectory/multiproject")
 		}
 
@@ -94,20 +77,17 @@ public class AppGenerator
 		MultiSwitcherGenerator.write("$rootDirectory/root/src/main/java", projectNames)
 	}
 
-	private static generateProject(rootDirectory, projectName)
-	{
+	private static generateProject(rootDirectory, projectName) {
 		def projectDir = "$rootDirectory/$projectName"
 		def generatedDir = new File("$projectDir/src/main/java/$Config.generatedPackage")
 
-		if (!generatedDir.exists())
-		{
+		if (!generatedDir.exists()) {
 			generatedDir.mkdirs()
 		}
 
 		println "Generating $projectName to $generatedDir"
 
-		if (generatedDir.exists())
-		{
+		if (generatedDir.exists()) {
 			Utils.ant.delete(dir:generatedDir)
 		}
 
@@ -146,15 +126,13 @@ public class AppGenerator
 		println "\tDone $projectName"
 	}
 
-	private static generateClasses()
-	{
+	private static generateClasses() {
 		return (1..Config.classesCount).collect(
 		{
 		  def methodsCount = Utils.rand.nextInt(Config.maxMethodsPerClass) + 1
 		  def clazz = new ClassGenerator(it)
 
-			(1..methodsCount).each
-			{
+			(1..methodsCount).each {
 				clazz.addMethod()
 			}
 
@@ -162,13 +140,11 @@ public class AppGenerator
 		})
 	}
 
-	private static writeClasses(classes, generatedDir)
-	{
+	private static writeClasses(classes, generatedDir) {
 		def pool = Executors.newFixedThreadPool(10)
 		def futures = []
 
-		classes.each(
-		{
+		classes.each({
 			def clazz = it
 
 			futures += pool.submit({
@@ -180,8 +156,7 @@ public class AppGenerator
 		pool.shutdown()
 	}
 
-	private static initialize()
-	{
+	private static initialize() {
 		def scriptPath = Config.class.protectionDomain.codeSource.location.path
 		scriptFile = new File(scriptPath)
 

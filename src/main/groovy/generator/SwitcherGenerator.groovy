@@ -2,18 +2,15 @@ package generator;
 
 public class SwitcherGenerator
 {
-	private static write(classes, outputDir, projectName)
-	{
+	private static write(classes, outputDir, projectName) {
 		def switcherClassName = "Switcher$projectName"
 
 		def counter = 0
 
-		def switchStatements = classes.collect(
-		{
+		def switchStatements = classes.collect({
 			def clazz = it
 
-			return clazz.methods.collect(
-			{
+			return clazz.methods.collect({
 				return ["case ${counter++}: ${clazz.qualifyName()}.$it.name(new Context()); return;"]
 			})
 		}).flatten()
@@ -22,8 +19,7 @@ public class SwitcherGenerator
 		def subClassesCount = (switchStatements.size() / maxCasesPerClass)
 		def mainMethodIfs = []
 
-		(0..subClassesCount).each
-		{
+		(0..subClassesCount).each {
 			def start = it * maxCasesPerClass
 			def end = Math.min(start + maxCasesPerClass, switchStatements.size() - 1)
 			def subClassesCases = switchStatements[start..end]

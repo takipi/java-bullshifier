@@ -1,11 +1,8 @@
 package generator;
 
-public class SpecialLogic
-{
-	private static generateSpecial()
-	{
-		switch (Utils.rand.nextInt(3))
-		{
+public class SpecialLogic {
+	private static generateSpecial() {
+		switch (Utils.rand.nextInt(3)) {
 			case (0): return parseIntBlock()
 			case (1): return synchronizedBlock()
 			case (2): return newFileBlock()
@@ -14,8 +11,7 @@ public class SpecialLogic
 		return []
 	}
 
-	private static parseIntBlock()
-	{
+	private static parseIntBlock() {
 		def num = Utils.generateName("num")
 
 		return [
@@ -30,8 +26,7 @@ public class SpecialLogic
 		]
 	}
 
-	private static synchronizedBlock()
-	{
+	private static synchronizedBlock() {
 		return [
 			"Object locker = new Object();",
 			"",
@@ -42,19 +37,14 @@ public class SpecialLogic
 		]
 	}
 
-	private static newFileBlock()
-	{
+	private static newFileBlock() {
 		def path = []
 		def len = Utils.rand.nextInt(10)
 
-		for (def i = 0; i < len; i++)
-		{
-			if (i - 1 == len)
-			{
+		for (def i = 0; i < len; i++) {
+			if (i - 1 == len) {
 				path += Utils.generateName("file")
-			}
-			else
-			{
+			} else {
 				path += Utils.generateName("dir")
 			}
 		}

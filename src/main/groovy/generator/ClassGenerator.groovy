@@ -1,14 +1,12 @@
 package generator;
 
-class ClassGenerator
-{
+class ClassGenerator {
 	private def name
 	private def classPackage
 	private def methods = []
 	private def classId
 
-	private def ClassGenerator(classId)
-	{
+	private def ClassGenerator(classId) {
 		def packageParts = Utils.rand.nextInt(Config.maxPackageLength) + 1
 		this.classId = classId
 		this.name = Utils.generateName("Cls", "", (Utils.rand.nextInt(10) + 4))
@@ -18,67 +16,55 @@ class ClassGenerator
 		}).join(".")
 	}
 
-	private def addMethod()
-	{
+	private def addMethod() {
 		def method = new MethodGenerator(this)
 
 		methods += method
 	}
 
-	private def randomMethod()
-	{
+	private def randomMethod() {
 		return methods[Utils.rand.nextInt(methods.size())]
 	}
 
-	private def qualifyName()
-	{
+	private def qualifyName() {
 		return "${classPackage}.$name"
 	}
 
-	private def generateMethods(classes, withLogic, withBridge, withLocals, withEvent)
-	{
+	private def generateMethods(classes, withLogic, withBridge, withLocals, withEvent) {
 		def methodCounter = 0
 
-		methods.each
-		{
+		methods.each {
 			it.addMethodId(methodCounter++)
 
-			if (withLocals)
-			{
+			if (withLocals) {
 				it.addLocals()
 			}
 
-			if (withEvent)
-			{
+			if (withEvent) {
 				it.addEvent()
 			}
 
-			if (withBridge)
-			{
+			if (withBridge) {
 				it.addBridge(classes)
 			}
 
-			if (withLogic)
-			{
+			if (withLogic) {
 				it.addLogic()
 			}
 		}
 	}
 
-	private def toPath()
-	{
+	private def toPath() {
 		def packagePath = classPackage.replace(".", "/")
 
 		return "$packagePath/${name}.java"
 	}
 
-	private def write(outputDir)
-	{
+	private def write(outputDir) {
 		def code = new StringBuilder()
 		code.append(classHeader())
 
-		methods.each
-		{
+		methods.each {
 			code.append(it.generate());
 			code.append("\n")
 		}
@@ -90,8 +76,7 @@ class ClassGenerator
 		classFile.write(code.toString())
 	}
 
-	private def classHeader()
-	{
+	private def classHeader() {
 		return """package $classPackage;
 
 import helpers.Config;
@@ -108,6 +93,5 @@ public class $name
 	 public static final int classId = $classId;
 	 static final Logger logger = LoggerFactory.getLogger(${name}.class);
 """
-
 	}
 }

@@ -1,7 +1,6 @@
 package generator;
 
-public class Config
-{
+public class Config {
     public static rootDirectory
     public static generatedPackage = "generated"
     public static templateDirectory = "template"
@@ -14,8 +13,8 @@ public class Config
 
     public static subprojectsCount = 1
 
-    public static minBlocksPerMethod = 1
-    public static maxBlocksPerMethod = 2
+    public static minBlocksPerMethod = 2
+    public static maxBlocksPerMethod = 4
     public static maxBlocksDepth = 2
     public static maxLoopStart = 0
     public static maxLoopEnd = 10000
