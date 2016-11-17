@@ -1,8 +1,8 @@
 # About
 
-An open source project by [OverOps](https://www.overops.com).
-
 ![alt 'Java Bullishifier'](http://blog.takipi.com/wp-content/uploads/2016/11/bullishifier.png)
+
+An open source project by [OverOps](https://www.overops.com).
 
 [Visit the site to download a sample result](https://takipi.github.io/java-bullshifier) or [read more on the blog](http://blog.takipi.com/java-bullshifier-generate-massive-random-code-bases)
 
