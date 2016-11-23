@@ -8,6 +8,7 @@ An open source project by [OverOps](https://www.overops.com).
 
 ## Requirements
 * Groovy installed
+* Gradle installed
 * Java installed
 
 
