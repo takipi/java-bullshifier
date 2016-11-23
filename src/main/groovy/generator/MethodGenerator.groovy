@@ -41,11 +41,10 @@ public class MethodGenerator {
 	private def generate() {
 		def codeStr = code.toString()
 
-		return """
-	public static void $name(Context context) throws Exception
-	{
-		$codeStr
-	}
-"""
+		return new StringBuilder()
+			.append("public static void $name(Context context) throws Exception")
+			.append("{")
+			.append(codeStr)
+			.append("}").toString()
 	}
 }
