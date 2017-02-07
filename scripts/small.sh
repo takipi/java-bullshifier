@@ -8,6 +8,11 @@ classes_count=10
 
 echo "Generating to $target_dir"
 ./gradlew run -Poutput-directory=$target_dir -Pclasses=$classes_count
+
+if [ "$?" != "0" ]; then
+	exit 1
+fi
+
 cd $target_dir
 
 echo "Compiling"

@@ -46,7 +46,7 @@ public class $switcherClassName$it
 )
 
 			mainMethodIfs += """
-		if (number >= $start && number < $end)
+		if (number >= $start && number <= $end)
 		{
 			$switcherClassName${it}.call(number);
 			return;
