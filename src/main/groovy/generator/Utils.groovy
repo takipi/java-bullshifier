@@ -6,7 +6,7 @@ public class Utils {
 
 	private static generateName(prefix = "", suffix = "", length = 10, capital = true) {
 		def preserveWord = ["new", "else", "try", "if", "for", "do", "while", "return", "private", "package", "import", "false", "null",
-			"int", "double", "bool", "short", "char", "long", "case", "static", "public", "class", "switch", "true", "byte"]
+			"int", "double", "bool", "short", "char", "long", "case", "static", "public", "class", "switch", "true", "byte", "enum"]
 
 		def generate = {
 			def randomChars = (0..length).collect {
