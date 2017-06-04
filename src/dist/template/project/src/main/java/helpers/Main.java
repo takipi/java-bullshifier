@@ -1,8 +1,11 @@
 package helpers;
 
 import generated.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Main
 {
@@ -10,6 +13,7 @@ public class Main
 		long count = Long.MAX_VALUE;
 		long waitMillis = 1000;
 		long startSleep = 0;
+		long startMillis = System.currentTimeMillis();
 		
 		if (args.length > 0) {
 			count = parseInt(args[0], count);
@@ -39,21 +43,38 @@ public class Main
 		}
 		
 		ExecutorService executor = Executors.newFixedThreadPool(5);
+		List<Future> calls = new ArrayList<Future>();
 
 		for (long i = 0; i < count; i++) {
 			try {
-				executor.submit(EntrypointSwitcher.randomCallable());
+				calls.add(executor.submit(EntrypointSwitcher.randomCallable()));
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 
-			try {
-				Thread.currentThread().sleep(waitMillis);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (waitMillis > 0l)
+			{
+				try {
+					Thread.currentThread().sleep(waitMillis);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		
+		for (Future call : calls) {
+			while (!call.isCancelled() && !call.isDone()) {
+				try {
+					Thread.currentThread().sleep(1);
+				} catch (Exception e) { }
+			}
+		}
+		
+		executor.shutdown();
+		
+		long endMillis = System.currentTimeMillis();
+		System.out.println("Took: " + (endMillis - startMillis) + " to throw " + calls.size() + " exceptions");
 	}
 
 	public static long parseInt(String str, long defaultValue) {

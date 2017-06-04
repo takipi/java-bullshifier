@@ -55,7 +55,7 @@ public class EntryPointGenerator {
 			lines += "		}\n"
 			lines += "		catch (Exception e) \n"
 			lines += "		{\n"
-			lines += "			e.printStackTrace();\n"
+			lines += "			//e.printStackTrace();\n"
 			lines += "		}\n"
 		} else {
 			lines += "		${switcherClassName}.call();\n"
