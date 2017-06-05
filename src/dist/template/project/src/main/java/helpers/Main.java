@@ -47,7 +47,8 @@ public class Main
 
 		for (long i = 0; i < count; i++) {
 			try {
-				calls.add(executor.submit(EntrypointSwitcher.randomCallable()));
+				// calls.add(executor.submit(EntrypointSwitcher.randomCallable()));
+				Switcher.call();
 			}
 			catch (Exception e) {
 				// e.printStackTrace();
