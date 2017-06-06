@@ -75,7 +75,7 @@ public class Main
 		executor.shutdown();
 		
 		long endMillis = System.currentTimeMillis();
-		System.err.println("Took: " + (endMillis - startMillis) + " to throw " + calls.size() + " exceptions");
+		System.err.println("Took: " + (endMillis - startMillis) + " to throw " + count + " exceptions");
 	}
 
 	public static long parseInt(String str, long defaultValue) {
