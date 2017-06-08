@@ -162,7 +162,7 @@ public class Main
 		
 		long endMillis = System.currentTimeMillis();
 		long diffMillis = (endMillis - startMillis);
-		System.err.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCount + " exceptions");
+		System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCount + " exceptions");
 	}
 
 	public static long parseLong(String str, long defaultValue) {
