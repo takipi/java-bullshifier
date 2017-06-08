@@ -90,7 +90,9 @@ public class Main
 				warmupMillisTotal += (System.currentTimeMillis() - warmupStartMillis);
 			} catch (Exception e) { }
 			
-			System.out.println("Starting iteration number: " + (j + 1));
+			if (runCount > 1) {
+				System.out.println("Starting iteration number: " + (j + 1));
+			}
 
 			for (long i = 0; i < exceptionsCount; i++) {
 				try {
