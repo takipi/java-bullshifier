@@ -13,32 +13,54 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.io.File;
+import java.util.Random;
 
 public class LoaderSwitcher@PROJECT_NAME@ extends ClassLoader {
+	private static final int loadersCount = 5;
+	private static URLClassLoader[] loaders = new URLClassLoader[5];
+	private static final Random rand = new Random();
+	
+	private static URLClassLoader getLoader() throws Exception {
+		int loaderIndex = rand.nextInt(loadersCount);
+		
+		if (loaders[loaderIndex] != null) {
+			return loaders[loaderIndex];
+		}
+		
+		synchronized (LoaderSwitcher@PROJECT_NAME@.class) {
+			if (loaders[loaderIndex] != null) {
+				return loaders[loaderIndex];
+			}
+			
+			String rootProjectDir = System.getenv(\"ROOT_PROJECT_DIR\");
+			
+			if (rootProjectDir == null) {
+				System.out.println(\"ROOT_PROJECT_DIR environment variable is not defined\");
+				System.exit(1);
+				return null;
+			}
+			
+			String projectName = \"@PROJECT_NAME@\";
+			String projectJar = String.format(\"%s/%s/build/libs/%s.jar\", 
+				rootProjectDir, projectName, projectName);
+			File projectJarFile = new File(projectJar);
+			
+			if (!projectJarFile.canRead()) {
+				System.out.println(\"Missing project jar: \" + projectJarFile);
+				System.exit(1);
+				return null;
+			}
+			
+			URL url = new URL(\"file://\" + projectJar);
+			loaders[loaderIndex] = new URLClassLoader(new URL[] { url });
+			
+			return loaders[loaderIndex];
+		}
+	}
+	
 	public static void call() throws Exception {
-		String rootProjectDir = System.getenv(\"ROOT_PROJECT_DIR\");
-		
-		if (rootProjectDir == null) {
-			System.out.println(\"ROOT_PROJECT_DIR environment variable is not defined\");
-			System.exit(1);
-			return;
-		}
-		
 		String projectName = \"@PROJECT_NAME@\";
-		String projectJar = String.format(\"%s/%s/build/libs/%s.jar\", 
-			rootProjectDir, projectName, projectName);
-		File projectJarFile = new File(projectJar);
-		
-		if (!projectJarFile.canRead()) {
-			System.out.println(\"Missing project jar: \" + projectJarFile);
-			System.exit(1);
-			return;
-		}
-		
-		URL url = new URL(\"file://\" + projectJar);
-		URLClassLoader loader = new URLClassLoader(new URL[] { url });
-		
-		Class<?> switcherClass = Class.forName(\"generated.Switcher\" + projectName, true, loader);
+		Class<?> switcherClass = Class.forName(\"generated.Switcher\" + projectName, true, getLoader());
 		Method callMethod = switcherClass.getMethod(\"call\");
 		callMethod.invoke(null);
 	}
