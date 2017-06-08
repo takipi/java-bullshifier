@@ -21,5 +21,5 @@ public class Config {
     public static maxElseIfBlocks = 2
     public static maxExpressionLength = 2
 
-    public static entryPointNum = 5
+    public static entryPointNum = 20
 }
