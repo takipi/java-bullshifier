@@ -97,6 +97,8 @@ public class AppGenerator {
 		{
 			fileset(dir:"$Config.templateDirectory/project")
 		}
+		
+		Utils.ant.chmod(file:"$projectDir/gradlew", perm:"+x")
 
 		println "\tGenerating $Config.classesCount classes"
 
