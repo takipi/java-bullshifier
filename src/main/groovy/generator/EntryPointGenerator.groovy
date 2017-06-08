@@ -48,18 +48,18 @@ public class EntryPointGenerator {
 	private static addCallToSwitcher(i, switcherClassName) {
 		def lines = "";
 
-		if (i % 2 == 0) {
-			lines += "		try\n"
-			lines += "		{\n"
-			lines += "			${switcherClassName}.call();\n"
-			lines += "		}\n"
-			lines += "		catch (Exception e) \n"
-			lines += "		{\n"
-			lines += "			//e.printStackTrace();\n"
-			lines += "		}\n"
-		} else {
+		// if (i % 2 == 0) {
+		// 	lines += "		try\n"
+		// 	lines += "		{\n"
+		// 	lines += "			${switcherClassName}.call();\n"
+		// 	lines += "		}\n"
+		// 	lines += "		catch (Exception e) \n"
+		// 	lines += "		{\n"
+		// 	lines += "			//e.printStackTrace();\n"
+		// 	lines += "		}\n"
+		// } else {
 			lines += "		${switcherClassName}.call();\n"
-		}
+		// }
 
 		return lines
 	}
