@@ -18,20 +18,50 @@ subprojects
 		binDir.mkdirs();
 		
 		def scriptFile = new File("$binDir/${projectDir.name}.sh")
+		def nodepsScriptFile = new File("$binDir/${projectDir.name}-nodeps.sh")
+		
 		def classPath = configurations.runtime.resolve()
+		
+		def dependentProjects = project.configurations.compile.dependencies
+			.grep({ it instanceof ProjectDependency }) 
+			.collect({ it.dependencyProject.configurations.compile.dependencies })
+			.plus(project.configurations.compile.dependencies)
+			.flatten()
+			.grep({ it instanceof ProjectDependency })
+			.unique()
+			.collect({ "${it.name}.jar".toString() })
+		
+		def classPathWithoutProjects = classPath.grep({ !(it.name in dependentProjects) })
+		
 		classPath += jar.archivePath
+		classPathWithoutProjects += jar.archivePath
+		
 		def classPathStr = classPath.join(File.pathSeparator)
+		def classPathWithoutProjectsStr = classPathWithoutProjects.join(File.pathSeparator)
 		
 		def lines = 
 		[
 			"#!/bin/bash",
 			"",
-			"java -cp $classPathStr $mainClass",
+			"java -cp $classPathStr $mainClass \$@",
 			""
 		]
 		
 		scriptFile.write(lines.join("\n"))
 		scriptFile.setExecutable(true)
+		
+		def nodepsLines = 
+		[
+			"#!/bin/bash",
+			"",
+			"export ROOT_PROJECT_DIR=$rootDir",
+			"",
+			"java -cp $classPathWithoutProjectsStr $mainClass \$@",
+			""
+		]
+		
+		nodepsScriptFile.write(nodepsLines.join("\n"))
+		nodepsScriptFile.setExecutable(true)
 	}
 	
 	build.dependsOn("generateScripts")

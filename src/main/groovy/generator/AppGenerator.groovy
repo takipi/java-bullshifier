@@ -60,21 +60,31 @@ public class AppGenerator {
 
 	private static generateSubProjects(rootDirectory, subprojectsCount) {
 		def projectNames = []
-
+		def generatedDir = new File("$rootDirectory/root/src/main/java/$Config.generatedPackage")
+		
+		if (!generatedDir.exists()) {
+			generatedDir.mkdirs()
+		}
+		
 		(1..subprojectsCount).each {
 			def projectName = Utils.generateName("Proj")
 
 			generateProject(Config.rootDirectory, projectName)
 			projectNames += projectName
+			
+			LoaderSwitcherGenerator.write(generatedDir, projectName)
 		}
 
 		Utils.ant.copy(todir:"$rootDirectory", overwrite:false) {
 			fileset(dir:"$Config.templateDirectory/multiproject")
 		}
+		
+		Utils.ant.chmod(file:"$rootDirectory/gradlew", perm:"+x")
 
 		GradleSettingsGenerator.write(rootDirectory, "GeneratedAgregator", projectNames + "root")
 		GradleGenerator.write("$rootDirectory/root", projectNames, "helpers.MultiMain")
 		MultiSwitcherGenerator.write("$rootDirectory/root/src/main/java", projectNames)
+		LoaderMultiSwitcherGenerator.write("$rootDirectory/root/src/main/java", projectNames)
 	}
 
 	private static generateProject(rootDirectory, projectName) {
