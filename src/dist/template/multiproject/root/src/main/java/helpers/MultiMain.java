@@ -140,12 +140,16 @@ public class MultiMain
 					if (!hideStackTraces) {
 						e.printStackTrace();
 					}
+					
+					if (singleThread) {
+						exceptionsCounter++;
+					}
 				}
 				
 				long intervalStartMillis = System.currentTimeMillis();
 				
 				do {
-					if (!singleThread && !hideStackTraces) {
+					if (!singleThread) {
 						List<Future> doneCalls = new ArrayList<Future>();
 						
 						for (Future call : calls) {
@@ -153,13 +157,15 @@ public class MultiMain
 								try {
 									call.get();
 								} catch (Exception e) {
-									Throwable cause = e;
-						
-									while (cause.getCause() != null) {
-										cause = cause.getCause();
+									if (!hideStackTraces) {
+										Throwable cause = e;
+							
+										while (cause.getCause() != null) {
+											cause = cause.getCause();
+										}
+										
+										cause.printStackTrace();
 									}
-									
-									cause.printStackTrace();
 								}
 								
 								exceptionsCounter++;
