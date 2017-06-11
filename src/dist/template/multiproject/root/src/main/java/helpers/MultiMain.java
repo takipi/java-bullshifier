@@ -94,6 +94,7 @@ public class MultiMain
 		for (int j = 0; j < runCount; j++) {
 			List<Future> calls = new ArrayList<Future>();
 			exceptionsCounter = 0l;
+			startMillis = System.currentTimeMillis();
 			
 			try {
 				long warmupStartMillis = System.currentTimeMillis();
