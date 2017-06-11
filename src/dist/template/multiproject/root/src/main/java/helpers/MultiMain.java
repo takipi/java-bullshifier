@@ -142,8 +142,6 @@ public class MultiMain
 					}
 				}
 				
-				exceptionsCounter++;
-				
 				long intervalStartMillis = System.currentTimeMillis();
 				
 				do {
@@ -164,6 +162,8 @@ public class MultiMain
 									cause.printStackTrace();
 								}
 								
+								exceptionsCounter++;
+								
 								doneCalls.add(call);
 							}
 						}
@@ -180,7 +180,8 @@ public class MultiMain
 					}
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
 				
-				if (((i + 1) % printStatusEvery) == 0) {
+				if ((exceptionsCounter > 0) &&
+					((exceptionsCounter % printStatusEvery) == 0)) {
 					long endMillis = System.currentTimeMillis();
 					long diffMillis = (endMillis - startMillis);
 					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
@@ -194,6 +195,8 @@ public class MultiMain
 					} catch (Exception e) { }
 				}
 				
+				exceptionsCounter++;
+				
 				if (!hideStackTraces) {
 					try {
 						call.get();
@@ -206,6 +209,13 @@ public class MultiMain
 						
 						cause.printStackTrace();
 					}
+				}
+				
+				if ((exceptionsCounter > 0) &&
+					((exceptionsCounter % printStatusEvery) == 0)) {
+					long endMillis = System.currentTimeMillis();
+					long diffMillis = (endMillis - startMillis);
+					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
 				}
 			}
 		}
