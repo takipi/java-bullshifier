@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.Random;
 
 public class LoaderSwitcher@PROJECT_NAME@ extends ClassLoader {
-	private static final int loadersCount;
+	private static int loadersCount;
 	private static URLClassLoader[] loaders = new URLClassLoader[5];
 	private static final Random rand = new Random();
 	
