@@ -49,6 +49,12 @@ public class Main
 			threadCount = parseInt(cmd.getOptionValue("thread-count"), threadCount);
 		}
 		
+		int printStatusEvery = Integer.MAX_VALUE;
+		
+		if (cmd.hasOption("print-status-every")) {
+			printStatusEvery = parseInt(cmd.getOptionValue("print-status-every"), printStatusEvery);
+		}
+		
 		int runCount = 1;
 		
 		if (cmd.hasOption("run-count")) {
@@ -76,6 +82,7 @@ public class Main
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;
 		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+		long exceptionsCounter = 0l;
 		
 		for (int j = 0; j < runCount; j++) {
 			List<Future> calls = new ArrayList<Future>();
@@ -108,6 +115,8 @@ public class Main
 					}
 				}
 				
+				exceptionsCounter++;
+				
 				long intervalStartMillis = System.currentTimeMillis();
 				
 				do {
@@ -139,6 +148,12 @@ public class Main
 						} catch (Exception e) { }
 					}
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
+				
+				if (((i + 1) % printStatusEvery) == 0) {
+					long endMillis = System.currentTimeMillis();
+					long diffMillis = (endMillis - startMillis);
+					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
+				}
 			}
 			
 			for (Future call : calls) {
@@ -189,6 +204,7 @@ public class Main
 		options.addOption("h", "help", false, "Print this help");
 		options.addOption("st", "single-thread", false, "Run everything directly from the main thread (default to false)");
 		options.addOption("hs", "hide-stacktraces", false, "Determine whether to print the stack traces of the exceptions (default to false)");
+		options.addOption("pse", "print-status-every", true, "Print to screen every n events (default to Integer.MAX_VALUE)");
 		options.addOption("tc", "thread-count", true, "The number of threads (default to 5)");
 		options.addOption("ec", "exceptions-count", true, "The number of exceptions to throw (default to 1000)");
 		options.addOption("wm", "warmup-millis", true, "Time to wait before starting to throw exceptions (in millis) (default to 0)");

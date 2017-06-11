@@ -50,6 +50,12 @@ public class MultiMain
 			threadCount = parseInt(cmd.getOptionValue("thread-count"), threadCount);
 		}
 		
+		int printStatusEvery = Integer.MAX_VALUE;
+		
+		if (cmd.hasOption("print-status-every")) {
+			printStatusEvery = parseInt(cmd.getOptionValue("print-status-every"), printStatusEvery);
+		}
+		
 		int runCount = 1;
 		
 		if (cmd.hasOption("run-count")) {
@@ -83,6 +89,7 @@ public class MultiMain
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;
 		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+		long exceptionsCounter = 0l;
 		
 		for (int j = 0; j < runCount; j++) {
 			List<Future> calls = new ArrayList<Future>();
@@ -135,6 +142,8 @@ public class MultiMain
 					}
 				}
 				
+				exceptionsCounter++;
+				
 				long intervalStartMillis = System.currentTimeMillis();
 				
 				do {
@@ -170,6 +179,12 @@ public class MultiMain
 						} catch (Exception e) { }
 					}
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
+				
+				if (((i + 1) % printStatusEvery) == 0) {
+					long endMillis = System.currentTimeMillis();
+					long diffMillis = (endMillis - startMillis);
+					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
+				}
 			}
 			
 			for (Future call : calls) {
@@ -199,7 +214,7 @@ public class MultiMain
 		
 		long endMillis = System.currentTimeMillis();
 		long diffMillis = (endMillis - startMillis);
-		System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCount + " exceptions");
+		System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
 	}
 
 	public static long parseLong(String str, long defaultValue) {
@@ -225,6 +240,7 @@ public class MultiMain
 		options.addOption("st", "single-thread", false, "Run everything directly from the main thread (default to false)");
 		options.addOption("sl", "single-loader", false, "Call subprojects from the main class loader (default to false)");
 		options.addOption("hs", "hide-stacktraces", false, "Determine whether to print the stack traces of the exceptions (default to false)");
+		options.addOption("pse", "print-status-every", true, "Print to screen every n events (default to Integer.MAX_VALUE)");
 		options.addOption("tc", "thread-count", true, "The number of threads (default to 5)");
 		options.addOption("ec", "exceptions-count", true, "The number of exceptions to throw (default to 1000)");
 		options.addOption("wm", "warmup-millis", true, "Time to wait before starting to throw exceptions (in millis) (default to 0)");
