@@ -17,7 +17,7 @@ import java.util.Random;
 
 public class LoaderSwitcher@PROJECT_NAME@ extends ClassLoader {
 	private static int loadersCount;
-	private static URLClassLoader[] loaders = new URLClassLoader[5];
+	private static URLClassLoader[] loaders;
 	private static final Random rand = new Random();
 	
 	static {
@@ -33,6 +33,8 @@ public class LoaderSwitcher@PROJECT_NAME@ extends ClassLoader {
 				loadersCount = 5;
 			}
 		}
+		
+		loaders = new URLClassLoader[loadersCount];
 	}
 	
 	private static URLClassLoader getLoader() throws Exception {
