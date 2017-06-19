@@ -24,6 +24,7 @@ public class MyServlet extends HttpServlet {
 			try {
 				Class<?> xhClass = Class.forName("com.sparktale.bugtale.agent.a.h.XH");
 				xhClass.getMethod("cs").invoke(null);
+				xhClass.getMethod("ps").invoke(null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
