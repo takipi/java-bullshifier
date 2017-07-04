@@ -90,6 +90,9 @@ public class MyServlet extends HttpServlet {
 		long exceptionsCounter = 0l;
 		
 		for (int j = 0; j < runCount; j++) {
+			startMillis = System.currentTimeMillis();
+			exceptionsCounter = 0l;
+			
 			List<Future> calls = new ArrayList<Future>();
 			
 			try {
