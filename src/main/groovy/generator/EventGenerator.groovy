@@ -20,7 +20,7 @@ class EventGenerator {
 	static generateMessages(verb, messagesCount) {
 		def result = []
 
-		for (int i = 0; i < messagesCount; i++) {
+		for (int i = 1; i < messagesCount; i++) {
 			result += "logger.$verb(\"Time for log - $verb ${generateMessage()}\");"
 		}
 
