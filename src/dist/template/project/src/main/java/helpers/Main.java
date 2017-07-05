@@ -86,6 +86,8 @@ public class Main
 		
 		for (int j = 0; j < runCount; j++) {
 			List<Future> calls = new ArrayList<Future>();
+			startMillis = System.currentTimeMillis();
+			exceptionsCounter = 0l;
 			
 			try {
 				long warmupStartMillis = System.currentTimeMillis();
