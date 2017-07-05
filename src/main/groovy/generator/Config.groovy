@@ -7,7 +7,7 @@ public class Config {
     public static configClassToUse = "SimpleConfig"
 
     public static classesCount = 10
-    public static maxMethodsPerClass = 5
+    public static methodsPerClass = 5
     public static maxPackageLength = 4
     public static bridgeSwitchSize = 4
 
@@ -22,4 +22,8 @@ public class Config {
     public static maxExpressionLength = 2
 
     public static entryPointNum = 20
+    
+    public static logInfoPerMethod = 5
+    public static logWarnPerMethod = 5
+    public static logErrorPerMethod = 5
 }

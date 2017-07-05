@@ -30,7 +30,23 @@ public class AppGenerator {
 		if (commandLine."subprojects") {
 			Config.subprojectsCount = Integer.parseInt(commandLine."subprojects")
 		}
-
+		
+		if (commandLine."method-per-class") {
+			Config.methodsPerClass = Integer.parseInt(commandLine."method-per-class")
+		}
+		
+		if (commandLine."log-info-per-method") {
+			Config.logInfoPerMethod = Integer.parseInt(commandLine."log-info-per-method")
+		}
+		
+		if (commandLine."log-warn-per-method") {
+			Config.logWarnPerMethod = Integer.parseInt(commandLine."log-warn-per-method")
+		}
+		
+		if (commandLine."log-error-per-method") {
+			Config.logErrorPerMethod = Integer.parseInt(commandLine."log-error-per-method")
+		}
+		
 		if (commandLine."config-class") {
 			Config.configClassToUse = commandLine."config-class"
 		}
@@ -141,7 +157,7 @@ public class AppGenerator {
 	private static generateClasses() {
 		return (1..Config.classesCount).collect(
 		{
-		  def methodsCount = Utils.rand.nextInt(Config.maxMethodsPerClass) + 1
+		  def methodsCount = Config.methodsPerClass
 		  def clazz = new ClassGenerator(it)
 
 			(1..methodsCount).each {
@@ -200,6 +216,30 @@ public class AppGenerator {
 			argName:"number",
 			"The number of generated projects (default to $Config.subprojectsCount)")
 
+		commandLineOptions._(
+			longOpt:"method-per-class",
+			args:1,
+			argName:"number",
+			"The number of methods per class (default to $Config.methodsPerClass)")
+		
+		commandLineOptions._(
+			longOpt:"log-info-per-method",
+			args:1,
+			argName:"number",
+			"The number of info statements per method (default to $Config.logInfoPerMethod)")
+		
+		commandLineOptions._(
+			longOpt:"log-warn-per-method",
+			args:1,
+			argName:"number",
+			"The number of warn statements per method (default to $Config.logWarnPerMethod)")
+		
+		commandLineOptions._(
+			longOpt:"log-error-per-method",
+			args:1,
+			argName:"number",
+			"The number of error statements per method (default to $Config.logErrorPerMethod)")
+		
 		commandLineOptions._(
 			longOpt:"config-class",
 			args:1,

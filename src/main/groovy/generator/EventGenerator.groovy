@@ -17,10 +17,10 @@ class EventGenerator {
 		return stringMessageLine
 	}
 
-	static generateMessages(verb, maxMessages) {
+	static generateMessages(verb, messagesCount) {
 		def result = []
 
-		for (int i = 0; i < rand.nextInt(maxMessages); i++) {
+		for (int i = 0; i < messagesCount; i++) {
 			result += "logger.$verb(\"Time for log - $verb ${generateMessage()}\");"
 		}
 
@@ -55,15 +55,15 @@ class EventGenerator {
 	}
 
 	static generateLogError() {
-		return generateMessages("error", 5).collect({ "\t\t\t$it" })
+		return generateMessages("error", Config.logErrorPerMethod).collect({ "\t\t\t$it" })
 	}
 
 	static generateLogWarn() {
-		return generateMessages("warn", 7).collect({ "\t\t\t$it" })
+		return generateMessages("warn", Config.logWarnPerMethod).collect({ "\t\t\t$it" })
 	}
 
 	static generateLogInfo() {
-		return generateMessages("info", 10).collect({ "\t\t\t$it" })
+		return generateMessages("info", Config.logInfoPerMethod).collect({ "\t\t\t$it" })
 	}
 
 	static generateSuicide() {
