@@ -31,8 +31,8 @@ public class AppGenerator {
 			Config.subprojectsCount = Integer.parseInt(commandLine."subprojects")
 		}
 		
-		if (commandLine."method-per-class") {
-			Config.methodsPerClass = Integer.parseInt(commandLine."method-per-class")
+		if (commandLine."methods-per-class") {
+			Config.methodsPerClass = Integer.parseInt(commandLine."methods-per-class")
 		}
 		
 		if (commandLine."log-info-per-method") {
@@ -217,7 +217,7 @@ public class AppGenerator {
 			"The number of generated projects (default to $Config.subprojectsCount)")
 
 		commandLineOptions._(
-			longOpt:"method-per-class",
+			longOpt:"methods-per-class",
 			args:1,
 			argName:"number",
 			"The number of methods per class (default to $Config.methodsPerClass)")
