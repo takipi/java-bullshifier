@@ -75,6 +75,12 @@ public class LoaderSwitcher@PROJECT_NAME@ extends ClassLoader {
 		}
 	}
 	
+	public static void resetLoaders() {
+		for (int i = 0; i < loaders.length; i++) {
+			loaders[i] = null;
+		}
+	}
+	
 	public static void call() throws Exception {
 		String projectName = \"@PROJECT_NAME@\";
 		Class<?> switcherClass = Class.forName(\"generated.Switcher\" + projectName, true, getLoader());

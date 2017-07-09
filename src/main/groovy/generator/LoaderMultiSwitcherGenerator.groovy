@@ -13,6 +13,12 @@ public class LoaderMultiSwitcherGenerator {
 
 			return "case ${counter++}: generated.LoaderSwitcher${projectName}.call(); return;"
 		}).join("\n\t\t\t")
+		
+		def resetLoadersStatements = projectNames.collect({
+			def projectName = it
+			
+			return "generated.LoaderSwitcher${projectName}.resetLoaders();"
+		}).join("\n\t\t")
 
 		switcherClassFile.write("""package generated;
 
@@ -33,6 +39,10 @@ public class LoaderMultiSwitcher
 			$cases
 			default: return;
 		}
+	}
+	
+	public static void resetLoaders() {
+		$resetLoadersStatements
 	}
 }
 """)

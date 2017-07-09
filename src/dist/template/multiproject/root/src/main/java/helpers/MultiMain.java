@@ -96,6 +96,10 @@ public class MultiMain
 			exceptionsCounter = 0l;
 			startMillis = System.currentTimeMillis();
 			
+			if (!singleLoader) {
+				LoaderMultiSwitcher.resetLoaders();
+			}
+			
 			try {
 				long warmupStartMillis = System.currentTimeMillis();
 				
