@@ -30,23 +30,23 @@ public class AppGenerator {
 		if (commandLine."subprojects") {
 			Config.subprojectsCount = Integer.parseInt(commandLine."subprojects")
 		}
-		
+
 		if (commandLine."methods-per-class") {
 			Config.methodsPerClass = Integer.parseInt(commandLine."methods-per-class")
 		}
-		
+
 		if (commandLine."log-info-per-method") {
 			Config.logInfoPerMethod = Integer.parseInt(commandLine."log-info-per-method")
 		}
-		
+
 		if (commandLine."log-warn-per-method") {
 			Config.logWarnPerMethod = Integer.parseInt(commandLine."log-warn-per-method")
 		}
-		
+
 		if (commandLine."log-error-per-method") {
 			Config.logErrorPerMethod = Integer.parseInt(commandLine."log-error-per-method")
 		}
-		
+
 		if (commandLine."config-class") {
 			Config.configClassToUse = commandLine."config-class"
 		}
@@ -77,24 +77,24 @@ public class AppGenerator {
 	private static generateSubProjects(rootDirectory, subprojectsCount) {
 		def projectNames = []
 		def generatedDir = new File("$rootDirectory/root/src/main/java/$Config.generatedPackage")
-		
+
 		if (!generatedDir.exists()) {
 			generatedDir.mkdirs()
 		}
-		
+
 		(1..subprojectsCount).each {
 			def projectName = Utils.generateName("Proj")
 
 			generateProject(Config.rootDirectory, projectName)
 			projectNames += projectName
-			
+
 			LoaderSwitcherGenerator.write(generatedDir, projectName)
 		}
 
 		Utils.ant.copy(todir:"$rootDirectory", overwrite:false) {
 			fileset(dir:"$Config.templateDirectory/multiproject")
 		}
-		
+
 		Utils.ant.chmod(file:"$rootDirectory/gradlew", perm:"+x")
 
 		GradleSettingsGenerator.write(rootDirectory, "GeneratedAgregator", projectNames + "root")
@@ -123,7 +123,12 @@ public class AppGenerator {
 		{
 			fileset(dir:"$Config.templateDirectory/project")
 		}
-		
+
+		Utils.ant.copy(todir:"$projectDir", overwrite:true)
+		{
+			fileset(dir:"$Config.templateDirectory/shared")
+		}
+
 		Utils.ant.chmod(file:"$projectDir/gradlew", perm:"+x")
 
 		println "\tGenerating $Config.classesCount classes"
@@ -221,25 +226,25 @@ public class AppGenerator {
 			args:1,
 			argName:"number",
 			"The number of methods per class (default to $Config.methodsPerClass)")
-		
+
 		commandLineOptions._(
 			longOpt:"log-info-per-method",
 			args:1,
 			argName:"number",
 			"The number of info statements per method (default to $Config.logInfoPerMethod)")
-		
+
 		commandLineOptions._(
 			longOpt:"log-warn-per-method",
 			args:1,
 			argName:"number",
 			"The number of warn statements per method (default to $Config.logWarnPerMethod)")
-		
+
 		commandLineOptions._(
 			longOpt:"log-error-per-method",
 			args:1,
 			argName:"number",
 			"The number of error statements per method (default to $Config.logErrorPerMethod)")
-		
+
 		commandLineOptions._(
 			longOpt:"config-class",
 			args:1,
