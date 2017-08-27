@@ -72,11 +72,20 @@ class EventGenerator {
 				"				 System.exit(0);"]
 	}
 
+	static generateIoCpuIntensiveLogic() {
+		return IoCpuIntensiveLogicGenerator.generate();
+	}
+
 	static addEvent() {
 		return [
 			"	if (Config.get().shouldWriteLogInfo(context))",
 			"	{"] +
 					EventGenerator.generateLogInfo() + [
+			"	}",
+			"",
+			"	if (Config.get().shouldDoIoCpuIntensiveLogic(context))",
+			"	{"] +
+					EventGenerator.generateIoCpuIntensiveLogic() + [
 			"	}",
 			"",
 			"	if (Config.get().shouldThrowSomething(methodId,classId))",
