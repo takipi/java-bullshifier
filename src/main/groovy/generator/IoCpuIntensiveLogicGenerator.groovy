@@ -10,7 +10,7 @@ public class IoCpuIntensiveLogicGenerator {
 		int currentIteration = context.counter % $Config.ioCpuIntensiveFileLimit;
 		int matrixSize = $Config.ioCpuIntensiveMatrixSize;
 
-	if (matrixSize <= 0) {
+		if (matrixSize <= 0) {
 			return;
 		}
 		
@@ -31,7 +31,7 @@ public class IoCpuIntensiveLogicGenerator {
 		String pathPrefix = "output/" + filePrefix;
 		
  		// find smallest file number
-		int smallestFileIndex = 0;
+		int smallestFileIndex = -1;
 		java.io.File[] files = directory.listFiles();
 		for (java.io.File file : files) {
 			if (file.getName().startsWith(filePrefix))
