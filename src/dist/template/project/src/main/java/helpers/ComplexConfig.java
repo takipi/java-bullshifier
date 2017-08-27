@@ -84,6 +84,11 @@ public class ComplexConfig extends Config {
 	}
 
 	@Override
+	public boolean shouldDoIoCpuIntensiveLogic(Context context) {
+		return false;
+	}
+
+	@Override
 	public void updateContext(Context context) {
 		context.counter++;
 	}

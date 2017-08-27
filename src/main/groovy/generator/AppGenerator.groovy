@@ -55,6 +55,10 @@ public class AppGenerator {
 			Config.templateDirectory = commandLine."template-directory"
 		}
 
+		if (commandLine."io-cpu-intensive-matrix-size") {
+			Config.ioCpuIntensiveMatrixSize = commandLine."io-cpu-intensive-matrix-size"
+		}
+
 		if (!Config.rootDirectory.isDirectory()) {
 			Config.rootDirectory.mkdirs()
 		}
@@ -245,11 +249,17 @@ public class AppGenerator {
 			args:1,
 			argName:"class name",
 			"The name of the config class (default to SimpleConfig)")
-
+		
 		commandLineOptions._(
 			longOpt:"template-directory",
 			args:1,
 			argName:"template directory",
 			"The path to the template direcotry (defult to 'template')")
+		
+		commandLineOptions._(
+			longOpt:"io-cpu-intensive-matrix-size",
+			args:1,
+			argName:"number",
+			"matrix size to use for io/cpu intensive logic (defaults to $Config.ioCpuIntensiveMatrixSize")
 	}
 }

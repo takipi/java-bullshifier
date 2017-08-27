@@ -27,7 +27,8 @@ run {
 		"method-per-class", 
 		"log-info-per-method", 
 		"log-warn-per-method", 
-		"log-error-per-method"
+		"log-error-per-method",
+		"io-cpu-intensive-matrix-size"
 	]
 	
 	availableCommandLineArguments.each {
