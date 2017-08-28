@@ -12,11 +12,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
 public class Main
 {
 	public static void main(String[] args) throws Exception {
@@ -154,24 +149,14 @@ public class Main
 							Thread.currentThread().sleep(100);
 						} catch (Exception e) { }
 					}
+					
+					StatsReporter.generateReport();
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
 				
 				if (((i + 1) % printStatusEvery) == 0) {
 					long endMillis = System.currentTimeMillis();
 					long diffMillis = (endMillis - startMillis);
-
-					System.out.println("---------STATS--------");
 					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
-					System.out.println("");
-
-					Runtime runtime = Runtime.getRuntime();	
-					System.out.println("heapSize = " + runtime.totalMemory());
-					System.out.println("maxHeap = " + runtime.maxMemory());
-					System.out.println("freeHeap = " + runtime.freeMemory());			
-					System.out.println("");
-
-					printMoreStats();
-					System.out.println("-------END STATS-------");
 				}
 			}
 			
@@ -214,24 +199,6 @@ public class Main
 			return Integer.parseInt(str);
 		} catch (Exception e) {
 			return defaultValue;
-		}
-	}
-
-	public static void printMoreStats() {
-		OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-
-		for (Method method : operatingSystemMXBean.getClass().getDeclaredMethods()) {
-			method.setAccessible(true);
-			if (method.getName().startsWith("get") && Modifier.isPublic(method.getModifiers())) {
-				Object value;
-				try {
-					value = method.invoke(operatingSystemMXBean);
-				}
-				catch (Exception e) {
-					value = e;
-				}
-				System.out.println(method.getName() + " = " + value);
-			}
 		}
 	}
 	
