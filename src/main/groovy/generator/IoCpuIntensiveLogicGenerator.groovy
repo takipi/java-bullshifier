@@ -7,7 +7,6 @@ public class IoCpuIntensiveLogicGenerator {
 	static generate() {
 		"""
 
-		int currentIteration = context.counter % $Config.ioCpuIntensiveFileLimit;
 		int matrixSize = $Config.ioCpuIntensiveMatrixSize;
 
 		if (matrixSize <= 0) {
@@ -30,8 +29,8 @@ public class IoCpuIntensiveLogicGenerator {
 		String filePrefix = "matrix_" + java.lang.Thread.currentThread().currentThread().getId() + "_";
 		String pathPrefix = "output/" + filePrefix;
 		
- 		// find smallest file number
-		int smallestFileIndex = -1;
+ 		// find largest file number
+		int largestFileIndex = -1;
 		java.io.File[] files = directory.listFiles();
 		for (java.io.File file : files) {
 			if (file.getName().startsWith(filePrefix))
@@ -39,8 +38,8 @@ public class IoCpuIntensiveLogicGenerator {
 				String fileSuffixNumber = file.getName().substring(filePrefix.length());
 				int number = Integer.parseInt(fileSuffixNumber);
 				
-				if (smallestFileIndex < number) {
-					smallestFileIndex = number;
+				if (largestFileIndex < number) {
+					largestFileIndex = number;
 				}
 			}
 		}
@@ -57,10 +56,11 @@ public class IoCpuIntensiveLogicGenerator {
 			}
 		}
 		
-		// read old matrix
-		java.io.File oldFile = new java.io.File(pathPrefix + (smallestFileIndex));
+		// read random old matrix
+		int randomOldFileIndex = rand.nextInt(largestFileIndex);
+		java.io.File oldFile = new java.io.File(pathPrefix + (randomOldFileIndex));
 
-		if ((smallestFileIndex > 0) && (oldFile.exists())) {
+		if ((largestFileIndex > 0) && (oldFile.exists())) {
 			java.io.BufferedReader br = null;
 			
 			try {
@@ -120,7 +120,7 @@ public class IoCpuIntensiveLogicGenerator {
 		}
 		
 		// write new matrix
-		java.io.File file = new java.io.File(pathPrefix + (smallestFileIndex + 1));
+		java.io.File file = new java.io.File(pathPrefix + (largestFileIndex + 1));
 		java.io.BufferedWriter bw = null;
 		
 		try {
@@ -147,6 +147,8 @@ public class IoCpuIntensiveLogicGenerator {
 				}
 			}
 		}
+
+		helpers.StatsReporter.reportIoCpuTaskCompleted();
 
 		"""
 	}
