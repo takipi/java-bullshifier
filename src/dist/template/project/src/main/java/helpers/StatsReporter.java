@@ -93,14 +93,12 @@ public class StatsReporter {
 		long now = System.currentTimeMillis();
 	
 		if (lastTimeReported >= (now - REPORT_INTERVAL_MILLIS)) {
-			return taskCounter;
+			return;
 		}
 
 		doGenerateReport();
 
 		lastTimeReported = System.currentTimeMillis();
-
-		return 0;
 	}
 
 	private void doGenerateReport() {
