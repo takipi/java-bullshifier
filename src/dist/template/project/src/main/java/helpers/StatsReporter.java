@@ -106,6 +106,7 @@ public class StatsReporter {
 
 		statMap.put("reportTime", System.currentTimeMillis());
 		statMap.put("tasksCount", taskCounter);
+		taskCounter = 0;
 
 		statMap.put("latency", doLatency());
 
