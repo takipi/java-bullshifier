@@ -82,14 +82,13 @@ public class Main
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;
 		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-		long exceptionsCounter = 0l;
 		long tasksCompleted = 0l;
 		
 		for (int j = 0; j < runCount; j++) {
 			List<Future> calls = new ArrayList<Future>();
 			warmupMillisTotal = 0l;
 			startMillis = System.currentTimeMillis();
-			exceptionsCounter = 0l;
+			tasksCompleted = 0l;
 			
 			try {
 				long warmupStartMillis = System.currentTimeMillis();
@@ -108,8 +107,8 @@ public class Main
 			for (long i = 0; i < exceptionsCount; i++) {
 				try {
 					if (singleThread) {
-						EntrypointSwitcher.randomCallable().call();
 						tasksCompleted++;
+						EntrypointSwitcher.randomCallable().call();
 						StatsReporter.get().incTasksCompleted();
 					} else {
 						calls.add(executor.submit(EntrypointSwitcher.randomCallable()));
@@ -120,8 +119,6 @@ public class Main
 						e.printStackTrace();
 					}
 				}
-				
-				exceptionsCounter++;
 				
 				long intervalStartMillis = System.currentTimeMillis();
 				
@@ -158,13 +155,13 @@ public class Main
 						} catch (Exception e) { }
 					}
 					
-					tasksCompleted = StatsReporter.get().generateReport();
+					StatsReporter.get().generateReport();
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
 				
-				if (((tasksCompleted + 1) % printStatusEvery) == 0) {
+				if (tasksCompleted > 0 && (tasksCompleted % printStatusEvery) == 0) {
 					long endMillis = System.currentTimeMillis();
 					long diffMillis = (endMillis - startMillis);
-					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
+					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + tasksCompleted + " exceptions");
 				}
 			}
 			
@@ -176,8 +173,8 @@ public class Main
 				}
 				
 				try {
-					call.get();
 					tasksCompleted++;
+					call.get();
 				} catch (Exception e) {
 					if (!hideStackTraces) {
 						if (e.getCause() != null) {
@@ -186,25 +183,25 @@ public class Main
 					}
 				}
 				
-				if (((tasksCompleted + 1) % printStatusEvery) == 0) {
+				if (tasksCompleted > 0 && (tasksCompleted % printStatusEvery) == 0) {
 					long endMillis = System.currentTimeMillis();
 					long diffMillis = (endMillis - startMillis);
-					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
+					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + tasksCompleted + " exceptions");
 				}
 			}
 		}
 		
-		if (((tasksCompleted + 1) % printStatusEvery) == 0) {
+		if (tasksCompleted > 0 && (tasksCompleted % printStatusEvery) == 0) {
 			long endMillis = System.currentTimeMillis();
 			long diffMillis = (endMillis - startMillis);
-			System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
+			System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + tasksCompleted + " exceptions");
 		}
 		
 		executor.shutdown();
 		
 		long endMillis = System.currentTimeMillis();
 		long diffMillis = (endMillis - startMillis);
-		System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCount + " exceptions");
+		System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + tasksCompleted + " exceptions");
 	}
 
 	public static long parseLong(String str, long defaultValue) {
