@@ -12,13 +12,20 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StatsReporter {
+	private static final long REPORT_INTERVAL_MILLIS = 10000l;
+	private static final String REPORT_FILE_NAME = "report-stats.csv";
+
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n");
 	
+	private static String[] keys = { "reportTime", "OpenFileDescriptorCount", "FreePhysicalMemorySize", 
+									"heapSize", "ProcessCpuLoad", "FreeSwapSpaceSize", "TotalPhysicalMemorySize", 
+									"TotalSwapSpaceSize", "freeHeap", "ProcessCpuTime", "MaxFileDescriptorCount",
+									"SystemCpuLoad", "maxHeap", "numberOfIoCpuTasks", "CommittedVirtualMemorySize" };
+
 	private static AtomicLong ioCpuTaskCounter = new AtomicLong();
 
 	private static long lastTimeReported = 0;
-	private static long reportIntervalMillis = 1000;
-	private static File reportFile = new File("report-stats.txt");
+	private static File reportFile = new File(REPORT_FILE_NAME);
 	
 	public static void reportIoCpuTaskCompleted() {
 		ioCpuTaskCounter.incrementAndGet();
@@ -27,7 +34,7 @@ public class StatsReporter {
 	public static void generateReport() {
 		long now = System.currentTimeMillis();
 	
-		if (lastTimeReported >= (now - reportIntervalMillis)) {
+		if (lastTimeReported >= (now - REPORT_INTERVAL_MILLIS)) {
 			return;
 		}
 		
@@ -38,16 +45,16 @@ public class StatsReporter {
 	
 	private static void doGenerateReport() {
 		Map<String, Object> statMap = new HashMap<String, Object>();
-		
+
 		statMap.put("reportTime", System.currentTimeMillis());
 		statMap.put("numberOfIoCpuTasks", countAndResetTotalIoCpuTasksCompleted());
-		
+
 		addHeapStats(statMap);
 		addMoreStats(statMap);
-		
-		String jsonReport = toJson(statMap);
-		
-		appendToFile(jsonReport);
+
+		// String jsonReport = toJson(statMap);
+		String csvReport = toCsv(statMap);
+		appendToFile(csvReport);
 	}
 
 	private static long countAndResetTotalIoCpuTasksCompleted() {
@@ -83,57 +90,37 @@ public class StatsReporter {
 			}
 		}
 	}
-	
-	private static String toJson(Map<String, Object> statMap) {
-		StringBuilder jsonString = new StringBuilder("{");
+
+	private static String toCsv(Map<String, Object> statMap) {
+		StringBuilder csv = new StringBuilder("");	
 		
-		boolean first = true;
-		
-		
-		for (String key : statMap.keySet()) {
+		for (String key : keys) {
 			Object value = statMap.get(key);
 		
-			if (!first) {
-				jsonString.append(", ");
-				jsonString.append(LINE_SEPARATOR);
-			}
-
-			first = false;
-			
-			jsonString.append(formatAsString(key));
-			jsonString.append(" : ");
-			
-			if (value instanceof Number) {
-				jsonString.append(value);
-			}
-			else  {
-				jsonString.append(formatAsString(value));
-			}
-		}
-
-		jsonString.append("}");
-		jsonString.append(LINE_SEPARATOR);
+			csv.append(value).append(", ");
+		}	
+	
+		csv.append(LINE_SEPARATOR);
 		
-		return jsonString.toString();
+		return csv.toString();
 	}
 
 	private static String formatAsString(Object obj) {
 		if (obj == null) {
 			return "NULL";
 		}
-		
+
 		return "\"" + obj.toString() + "\"";
 	}
-	
-	private static void appendToFile(String jsonReport) {
+
+	private static void appendToFile(String reportText) {
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		
 		try {
 			fw = new FileWriter(reportFile, true);
 			bw = new BufferedWriter(fw);
-			bw.write(jsonReport);
-			bw.write(LINE_SEPARATOR);
+			bw.write(reportText);
 			bw.flush();
 		}
 		catch (Exception e) {
