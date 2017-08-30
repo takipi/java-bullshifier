@@ -24,15 +24,15 @@ public class SimpleConfig extends Config {
 	}
 
 	public boolean shouldWriteLogInfo(Context context) {
-		return false;
+		return true;
 	}
 
 	public boolean shouldWriteLogWarn(Context context) {
-		return false;
+		return context.counter % 5 == 0;
 	}
 
 	public boolean shouldWriteLogError(Context context) {
-		return false;
+		return context.counter % 8 == 0;
 	}
 
 	public boolean shouldSuicide() {
@@ -44,6 +44,10 @@ public class SimpleConfig extends Config {
 	}
 
 	public boolean shouldThrowSomething(int methodId, int classId) {
+		return true;
+	}
+
+	public boolean shouldDoIoCpuIntensiveLogic(Context context) {
 		return true;
 	}
 

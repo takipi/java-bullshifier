@@ -47,12 +47,20 @@ public class AppGenerator {
 			Config.logErrorPerMethod = Integer.parseInt(commandLine."log-error-per-method")
 		}
 		
+		if (commandLine."bridge-switch-size") {
+			Config.bridgeSwitchSize = Integer.parseInt(commandLine."bridge-switch-size")
+		}
+		
 		if (commandLine."config-class") {
 			Config.configClassToUse = commandLine."config-class"
 		}
 
 		if (commandLine."template-directory") {
 			Config.templateDirectory = commandLine."template-directory"
+		}
+
+		if (commandLine."io-cpu-intensive-matrix-size") {
+			Config.ioCpuIntensiveMatrixSize = commandLine."io-cpu-intensive-matrix-size"
 		}
 
 		if (!Config.rootDirectory.isDirectory()) {
@@ -241,15 +249,27 @@ public class AppGenerator {
 			"The number of error statements per method (default to $Config.logErrorPerMethod)")
 		
 		commandLineOptions._(
+			longOpt:"bridge-switch-size",
+			args:1,
+			argName:"number",
+			"The number of methods that may be called from each generated method (default to $Config.bridgeSwitchSize)")
+		
+		commandLineOptions._(
 			longOpt:"config-class",
 			args:1,
 			argName:"class name",
 			"The name of the config class (default to SimpleConfig)")
-
+		
 		commandLineOptions._(
 			longOpt:"template-directory",
 			args:1,
 			argName:"template directory",
 			"The path to the template direcotry (defult to 'template')")
+		
+		commandLineOptions._(
+			longOpt:"io-cpu-intensive-matrix-size",
+			args:1,
+			argName:"number",
+			"matrix size to use for io/cpu intensive logic (defaults to $Config.ioCpuIntensiveMatrixSize")
 	}
 }

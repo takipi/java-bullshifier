@@ -26,4 +26,7 @@ public class Config {
     public static logInfoPerMethod = 5
     public static logWarnPerMethod = 5
     public static logErrorPerMethod = 5
+    
+    public static ioCpuIntensiveMatrixSize = 300
+    public static ioCpuIntensiveFileLimit = 100
 }
