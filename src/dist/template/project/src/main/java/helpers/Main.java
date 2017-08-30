@@ -155,6 +155,8 @@ public class Main
 							Thread.currentThread().sleep(100);
 						} catch (Exception e) { }
 					}
+					
+					StatsReporter.generateReport();
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
 				
 				if (((tasksCompleted + 1) % printStatusEvery) == 0) {

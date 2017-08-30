@@ -47,6 +47,10 @@ public class SimpleConfig extends Config {
 		return true;
 	}
 
+	public boolean shouldDoIoCpuIntensiveLogic(Context context) {
+		return true;
+	}
+
 	public void updateContext(Context context) {
 		context.counter++;
 	}
