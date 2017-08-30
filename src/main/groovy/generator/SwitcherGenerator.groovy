@@ -18,7 +18,7 @@ public class SwitcherGenerator {
 		def subClassesCount = (switchStatements.size() / maxCasesPerClass)
 		def mainMethodIfs = []
 
-		(0..subClassesCount).each {
+		(0..(subClassesCount - 1)).each {
 			def start = it * maxCasesPerClass
 			def end = Math.min(start + maxCasesPerClass, switchStatements.size() - 1)
 			def subClassesCases = switchStatements[start..end]

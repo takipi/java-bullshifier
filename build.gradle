@@ -28,6 +28,8 @@ run {
 		"log-info-per-method", 
 		"log-warn-per-method", 
 		"log-error-per-method",
+		"bridge-switch-size",
+		"methods-per-class",
 		"io-cpu-intensive-matrix-size"
 	]
 	
