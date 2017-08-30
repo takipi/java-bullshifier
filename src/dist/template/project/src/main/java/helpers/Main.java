@@ -150,7 +150,7 @@ public class Main
 						} catch (Exception e) { }
 					}
 					
-					StatsReporter.generateReport();
+					StatsReporter.get().generateReport();
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
 				
 				if (((i + 1) % printStatusEvery) == 0) {

@@ -5,8 +5,8 @@ import java.util.concurrent.Executors
 
 public class IoCpuIntensiveLogicGenerator {
 	static generate() {
-		"""
-
+		return """
+		int maxFiles = $Config.ioCpuIntensiveFileLimit;
 		int matrixSize = $Config.ioCpuIntensiveMatrixSize;
 
 		if (matrixSize <= 0) {
@@ -57,7 +57,12 @@ public class IoCpuIntensiveLogicGenerator {
 		}
 		
 		// read random old matrix
-		int randomOldFileIndex = rand.nextInt(largestFileIndex);
+		int randomOldFileIndex = 0;
+
+		if (largestFileIndex > 0) {
+			randomOldFileIndex = rand.nextInt(largestFileIndex);
+		}
+
 		java.io.File oldFile = new java.io.File(pathPrefix + (randomOldFileIndex));
 
 		if ((largestFileIndex > 0) && (oldFile.exists())) {
@@ -120,7 +125,9 @@ public class IoCpuIntensiveLogicGenerator {
 		}
 		
 		// write new matrix
-		java.io.File file = new java.io.File(pathPrefix + (largestFileIndex + 1));
+		int newIndex = ((largestFileIndex + 1) % maxFiles);
+
+		java.io.File file = new java.io.File(pathPrefix + (newIndex));
 		java.io.BufferedWriter bw = null;
 		
 		try {
@@ -148,7 +155,7 @@ public class IoCpuIntensiveLogicGenerator {
 			}
 		}
 
-		helpers.StatsReporter.reportIoCpuTaskCompleted();
+		helpers.StatsReporter.get().reportIoCpuTaskCompleted();
 
 		"""
 	}
