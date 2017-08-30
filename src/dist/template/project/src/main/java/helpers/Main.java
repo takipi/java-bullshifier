@@ -108,8 +108,8 @@ public class Main
 			for (long i = 0; i < exceptionsCount; i++) {
 				try {
 					if (singleThread) {
-						EntrypointSwitcher.randomCallable().call();
 						tasksCompleted++;
+						EntrypointSwitcher.randomCallable().call();
 					} else {
 						calls.add(executor.submit(EntrypointSwitcher.randomCallable()));
 					}
@@ -174,8 +174,8 @@ public class Main
 				}
 				
 				try {
-					call.get();
 					tasksCompleted++;
+					call.get();
 				} catch (Exception e) {
 					if (!hideStackTraces) {
 						if (e.getCause() != null) {
