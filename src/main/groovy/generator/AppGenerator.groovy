@@ -47,6 +47,10 @@ public class AppGenerator {
 			Config.logErrorPerMethod = Integer.parseInt(commandLine."log-error-per-method")
 		}
 		
+		if (commandLine."bridge-switch-size") {
+			Config.bridgeSwitchSize = Integer.parseInt(commandLine."bridge-switch-size")
+		}
+		
 		if (commandLine."config-class") {
 			Config.configClassToUse = commandLine."config-class"
 		}
@@ -239,6 +243,12 @@ public class AppGenerator {
 			args:1,
 			argName:"number",
 			"The number of error statements per method (default to $Config.logErrorPerMethod)")
+		
+		commandLineOptions._(
+			longOpt:"bridge-switch-size",
+			args:1,
+			argName:"number",
+			"The number of methods that may be called from each generated method (default to $Config.bridgeSwitchSize)")
 		
 		commandLineOptions._(
 			longOpt:"config-class",

@@ -27,7 +27,9 @@ run {
 		"method-per-class", 
 		"log-info-per-method", 
 		"log-warn-per-method", 
-		"log-error-per-method"
+		"log-error-per-method",
+		"bridge-switch-size",
+		"methods-per-class"
 	]
 	
 	availableCommandLineArguments.each {

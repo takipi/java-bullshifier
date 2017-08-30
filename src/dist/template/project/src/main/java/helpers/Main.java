@@ -83,9 +83,11 @@ public class Main
 		long warmupMillisTotal = 0l;
 		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 		long exceptionsCounter = 0l;
+		long tasksCompleted = 0l;
 		
 		for (int j = 0; j < runCount; j++) {
 			List<Future> calls = new ArrayList<Future>();
+			warmupMillisTotal = 0l;
 			startMillis = System.currentTimeMillis();
 			exceptionsCounter = 0l;
 			
@@ -107,6 +109,7 @@ public class Main
 				try {
 					if (singleThread) {
 						EntrypointSwitcher.randomCallable().call();
+						tasksCompleted++;
 					} else {
 						calls.add(executor.submit(EntrypointSwitcher.randomCallable()));
 					}
@@ -122,7 +125,7 @@ public class Main
 				long intervalStartMillis = System.currentTimeMillis();
 				
 				do {
-					if (!singleThread && !hideStackTraces) {
+					if (!singleThread) {
 						List<Future> doneCalls = new ArrayList<Future>();
 						
 						for (Future call : calls) {
@@ -130,11 +133,14 @@ public class Main
 								try {
 									call.get();
 								} catch (Exception e) {
-									if (e.getCause() != null) {
-										e.getCause().printStackTrace();
+									if (!hideStackTraces) {
+										if (e.getCause() != null) {
+											e.getCause().printStackTrace();
+										}
 									}
 								}
 								
+								tasksCompleted++;
 								doneCalls.add(call);
 							}
 						}
@@ -151,7 +157,7 @@ public class Main
 					}
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
 				
-				if (((i + 1) % printStatusEvery) == 0) {
+				if (((tasksCompleted + 1) % printStatusEvery) == 0) {
 					long endMillis = System.currentTimeMillis();
 					long diffMillis = (endMillis - startMillis);
 					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
@@ -165,16 +171,29 @@ public class Main
 					} catch (Exception e) { }
 				}
 				
-				if (!hideStackTraces) {
-					try {
-						call.get();
-					} catch (Exception e) {
+				try {
+					call.get();
+					tasksCompleted++;
+				} catch (Exception e) {
+					if (!hideStackTraces) {
 						if (e.getCause() != null) {
 							e.getCause().printStackTrace();
 						}
 					}
 				}
+				
+				if (((tasksCompleted + 1) % printStatusEvery) == 0) {
+					long endMillis = System.currentTimeMillis();
+					long diffMillis = (endMillis - startMillis);
+					System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
+				}
 			}
+		}
+		
+		if (((tasksCompleted + 1) % printStatusEvery) == 0) {
+			long endMillis = System.currentTimeMillis();
+			long diffMillis = (endMillis - startMillis);
+			System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + exceptionsCounter + " exceptions");
 		}
 		
 		executor.shutdown();
