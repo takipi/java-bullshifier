@@ -154,9 +154,6 @@ public class IoCpuIntensiveLogicGenerator {
 				}
 			}
 		}
-
-		helpers.StatsReporter.get().reportIoCpuTaskCompleted();
-
 		"""
 	}
 }

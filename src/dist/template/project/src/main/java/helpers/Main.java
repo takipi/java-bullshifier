@@ -110,6 +110,7 @@ public class Main
 					if (singleThread) {
 						EntrypointSwitcher.randomCallable().call();
 						tasksCompleted++;
+						StatsReporter.get().incTasksCompleted();
 					} else {
 						calls.add(executor.submit(EntrypointSwitcher.randomCallable()));
 					}
@@ -141,6 +142,7 @@ public class Main
 								}
 								
 								tasksCompleted++;
+								StatsReporter.get().incTasksCompleted();
 								doneCalls.add(call);
 							}
 						}
@@ -156,7 +158,7 @@ public class Main
 						} catch (Exception e) { }
 					}
 					
-					StatsReporter.get().generateReport();
+					tasksCompleted = StatsReporter.get().generateReport();
 				} while ((System.currentTimeMillis() - intervalStartMillis) < intervalMillis);
 				
 				if (((tasksCompleted + 1) % printStatusEvery) == 0) {

@@ -73,7 +73,7 @@ public class StatsReporter {
 		return instance;
 	}
 
-	public void reportIoCpuTaskCompleted() {
+	public void incTasksCompleted() {
 		taskCounter++;
 	}
 
@@ -93,12 +93,14 @@ public class StatsReporter {
 		long now = System.currentTimeMillis();
 	
 		if (lastTimeReported >= (now - REPORT_INTERVAL_MILLIS)) {
-			return;
+			return taskCounter;
 		}
 
 		doGenerateReport();
 
 		lastTimeReported = System.currentTimeMillis();
+
+		return 0;
 	}
 
 	private void doGenerateReport() {
