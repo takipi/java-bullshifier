@@ -6,34 +6,35 @@ apply plugin: "application"
 mainClassName = "helpers.Main"
 
 buildscript {
-    repositories {
-        jcenter()
-    }
+	repositories {
+		jcenter()
+	}
 
-    dependencies {
-        classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
-    }
+	dependencies {
+		classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
+	}
 }
 
 repositories
 {
-        mavenCentral()
+	mavenCentral()
 }
 
 dependencies
 {
 	providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
 	compile 'ch.qos.logback:logback-classic:1.1.7'
-  compile 'org.slf4j:slf4j-api:1.7.10'
+	compile 'org.slf4j:slf4j-api:1.7.10'
+	compile 'commons-cli:commons-cli:1.4'
 }
 
 compileJava {
-    options.fork = true
-    options.forkOptions.setMemoryMaximumSize("4g")
+	options.fork = true
+	options.forkOptions.setMemoryMaximumSize("4g")
 }
 
 fatJar {
-    zip64 = true
+	zip64 = true
 }
 
 project.ext.set("mainClass", "helpers.Main")

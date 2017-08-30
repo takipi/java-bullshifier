@@ -18,7 +18,19 @@ run {
 	
 	def projectProperties = gradle.startParameter.projectProperties
 	
-	["output-directory", "classes", "subprojects", "config-class"].each {
+	def availableCommandLineArguments = [
+		"output-directory", 
+		"classes", 
+		"subprojects", 
+		"config-class", 
+		"help", 
+		"method-per-class", 
+		"log-info-per-method", 
+		"log-warn-per-method", 
+		"log-error-per-method"
+	]
+	
+	availableCommandLineArguments.each {
 		if (projectProperties.containsKey(it)) {
 			args += ["--$it", projectProperties[it]]
 		}

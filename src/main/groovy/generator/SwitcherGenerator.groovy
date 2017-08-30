@@ -1,7 +1,6 @@
 package generator;
 
-public class SwitcherGenerator
-{
+public class SwitcherGenerator {
 	private static write(classes, outputDir, projectName) {
 		def switcherClassName = "Switcher$projectName"
 

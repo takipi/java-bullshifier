@@ -13,6 +13,8 @@ public class BridgeGenerator {
 		lines += ""
 		lines += addSwitch(swtichMethods)
 		lines += ""
+		lines += "if (Boolean.parseBoolean(\"true\")) { return; }"
+		lines += ""
 
 		return lines
 	}
