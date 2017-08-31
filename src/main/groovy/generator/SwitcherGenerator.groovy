@@ -1,5 +1,7 @@
 package generator;
 
+import generator.Config
+
 public class SwitcherGenerator {
 	private static write(classes, outputDir, projectName) {
 		def switcherClassName = "Switcher$projectName"
@@ -54,6 +56,7 @@ public class $switcherClassName$it
 		}
 
 		def switcherClassFile = new File("$outputDir/generated/${switcherClassName}.java")
+		def maxRoutes = Math.min(Config.switcherMaxRoutes, switchStatements.size())
 
 		switcherClassFile.write("""package generated;
 import helpers.Config;
@@ -62,7 +65,7 @@ public class $switcherClassName
 {
 	public static void call() throws Exception
 	{
-		call(Config.get().getRandom().nextInt(${switchStatements.size()}));
+		call(Config.get().getRandom().nextInt($maxRoutes));
 	}
 	public static void call(int number) throws Exception
 	{

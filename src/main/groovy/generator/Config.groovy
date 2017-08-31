@@ -10,6 +10,7 @@ public class Config {
     public static methodsPerClass = 5
     public static maxPackageLength = 4
     public static bridgeSwitchSize = 4
+    public static switcherMaxRoutes = Integer.MAX_VALUE
 
     public static subprojectsCount = 1
 

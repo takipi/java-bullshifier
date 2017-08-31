@@ -65,23 +65,27 @@ public class EntryPointGenerator {
 	}
 
 	private static generateEntrypointsCallable(i, switcherClassName) {
-		def lines = "";
-		lines += "package generated;\n"
-		lines += "\n"
-		lines += "import helpers.Config;\n"
-		lines += "import helpers.Context;\n"
-		lines += "import java.util.concurrent.Callable;\n"
-		lines += "\n"
-		lines += "public class EntrypointCallable${i} implements Callable<Object>\n"
-		lines += "{\n"
-		lines += "	public Object call() throws Exception\n"
-		lines += "	{\n"
-		lines += addCallToSwitcher(i, switcherClassName)
-		lines += "		return null;\n"
-		lines += "	}\n"
-		lines += "}\n"
+		return """
+		package generated;
+		
+		import helpers.Config;
+		import helpers.Context;
+		import java.util.concurrent.Callable;
 
-		return lines
+		public class EntrypointCallable${i} implements Callable<Object> {
+			public Object call() throws Exception {				
+				long startTime = System.currentTimeMillis();
+				try {
+					${addCallToSwitcher(i, switcherClassName)}
+				}
+				finally {
+					helpers.StatsReporter.get().reportLatency(System.currentTimeMillis() - startTime);
+				}
+				return null;
+			}
+		}
+
+		""";
 	}
 
 	private static addCases() {

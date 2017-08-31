@@ -51,6 +51,10 @@ public class AppGenerator {
 			Config.bridgeSwitchSize = Integer.parseInt(commandLine."bridge-switch-size")
 		}
 		
+		if (commandLine."switcher-max-routes") {
+			Config.switcherMaxRoutes = Integer.parseInt(commandLine."switcher-max-routes")
+		}
+		
 		if (commandLine."config-class") {
 			Config.configClassToUse = commandLine."config-class"
 		}
@@ -253,6 +257,12 @@ public class AppGenerator {
 			args:1,
 			argName:"number",
 			"The number of methods that may be called from each generated method (default to $Config.bridgeSwitchSize)")
+		
+		commandLineOptions._(
+			longOpt:"switcher-max-routes",
+			args:1,
+			argName:"number",
+			"The maximum methods available from switcher (default to $Config.switcherMaxRoutes)")
 		
 		commandLineOptions._(
 			longOpt:"config-class",
