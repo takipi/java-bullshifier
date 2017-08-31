@@ -28,11 +28,11 @@ public class SimpleConfig extends Config {
 	}
 
 	public boolean shouldWriteLogWarn(Context context) {
-		return context.counter % 5 == 0;
+		return false;
 	}
 
 	public boolean shouldWriteLogError(Context context) {
-		return context.counter % 8 == 0;
+		return context.counter % 15 == 0;
 	}
 
 	public boolean shouldSuicide() {
