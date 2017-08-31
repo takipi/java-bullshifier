@@ -20,7 +20,7 @@ public class BridgeGenerator {
 	}
 
 	private static randomMethods(classes, bridgeSwitchSize) {
-		return (0..bridgeSwitchSize).collect({
+		return (1..bridgeSwitchSize).collect({
 			def classIndex = Utils.rand.nextInt(classes.size())
 			return classes[classIndex].randomMethod()
 		})

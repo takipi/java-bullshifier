@@ -29,6 +29,7 @@ run {
 		"log-warn-per-method", 
 		"log-error-per-method",
 		"bridge-switch-size",
+		"switcher-max-routes",
 		"methods-per-class",
 		"io-cpu-intensive-matrix-size"
 	]
