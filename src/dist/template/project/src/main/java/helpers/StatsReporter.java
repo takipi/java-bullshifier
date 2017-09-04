@@ -73,10 +73,6 @@ public class StatsReporter {
 		return instance;
 	}
 
-	public void incTasksCompleted() {
-		taskCounter++;
-	}
-
 	public void reportLatency(long latencyMillis) {
 		latencyUpdateLock.lock();
 
@@ -105,10 +101,8 @@ public class StatsReporter {
 		Map<String, Object> statMap = new HashMap<String, Object>();
 
 		statMap.put("reportTime", System.currentTimeMillis());
-		statMap.put("tasksCount", taskCounter);
-		taskCounter = 0;
 
-		statMap.put("latency", doLatency());
+		addLatencyAndThroughput(statMap);
 
 		addHeapStats(statMap);
 		addMoreStats(statMap);
@@ -118,19 +112,25 @@ public class StatsReporter {
 		appendToFile(csvReport);
 	}
 
-	private long doLatency()
-	{
+	private void addLatencyAndThroughput(Map<String, Object> statMap) {
 		latencyGetLock.lock();
 
 		try {
 			long totalLatency = latencyTotal.getAndSet(0);
 			int count = latencyReportsCounter.getAndSet(0);
 
+			long avgLatency = 0;
+
 			if (count == 0) {
-				return 0;
+				avgLatency = 0;
+			}
+			else
+			{
+				avgLatency = totalLatency / count;
 			}
 
-			return totalLatency / count;
+			statMap.put("tasksCount", count);
+			statMap.put("latency", avgLatency);
 		}
 		finally {
 			latencyGetLock.unlock();

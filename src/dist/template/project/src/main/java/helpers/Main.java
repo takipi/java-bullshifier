@@ -109,7 +109,6 @@ public class Main
 					if (singleThread) {
 						tasksCompleted++;
 						EntrypointSwitcher.randomCallable().call();
-						StatsReporter.get().incTasksCompleted();
 					} else {
 						calls.add(executor.submit(EntrypointSwitcher.randomCallable()));
 					}
@@ -139,7 +138,6 @@ public class Main
 								}
 								
 								tasksCompleted++;
-								StatsReporter.get().incTasksCompleted();
 								doneCalls.add(call);
 							}
 						}
