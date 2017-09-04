@@ -152,16 +152,30 @@ public class StatsReporter {
 		
 		for (Method method : operatingSystemMXBean.getClass().getDeclaredMethods()) {
 			method.setAccessible(true);
+			String key = method.getName().substring(getPrefix.length());
+	
+			boolean found = false;
+			for (String key2 : keys) {
+			
+				if (key2.equalsIgnoreCase(key)) {
+					found = true;
+				}
+			}
+
+			if (!found) {
+				continue;
+			}
+
 			if (method.getName().startsWith(getPrefix) && Modifier.isPublic(method.getModifiers())) {
 				Object value;
 				try {
 					value = method.invoke(operatingSystemMXBean);
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 					value = e;
 				}
 				
-				String key = method.getName().substring(getPrefix.length());
 				map.put(key, value);
 			}
 		}
