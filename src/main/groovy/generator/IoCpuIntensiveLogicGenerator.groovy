@@ -5,13 +5,13 @@ import java.util.concurrent.Executors
 
 public class IoCpuIntensiveLogicGenerator {
 	static generate() {
+		if (Config.ioCpuIntensiveMatrixSize) {
+			return "";
+		}
+		
 		return """
 		int maxFiles = $Config.ioCpuIntensiveFileLimit;
 		int matrixSize = $Config.ioCpuIntensiveMatrixSize;
-
-		if (matrixSize <= 0) {
-			return;
-		}
 		
 		// random matrix
 		int[][] matrix = new int[matrixSize][matrixSize];
