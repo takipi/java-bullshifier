@@ -55,6 +55,10 @@ public class AppGenerator {
 			Config.switcherMaxRoutes = Integer.parseInt(commandLine."switcher-max-routes")
 		}
 		
+		if (commandLine."entry-points") {
+			Config.entryPointNum = Integer.parseInt(commandLine."entry-points")
+		}
+		
 		if (commandLine."config-class") {
 			Config.configClassToUse = commandLine."config-class"
 		}
@@ -263,6 +267,12 @@ public class AppGenerator {
 			args:1,
 			argName:"number",
 			"The maximum methods available from switcher (default to $Config.switcherMaxRoutes)")
+		
+		commandLineOptions._(
+			longOpt:"entry-points",
+			args:1,
+			argName:"number",
+			"Number of entry points")
 		
 		commandLineOptions._(
 			longOpt:"config-class",
