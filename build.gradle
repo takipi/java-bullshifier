@@ -31,6 +31,7 @@ run {
 		"bridge-switch-size",
 		"switcher-max-routes",
 		"methods-per-class",
+		"entry-points",
 		"io-cpu-intensive-matrix-size"
 	]
 	
