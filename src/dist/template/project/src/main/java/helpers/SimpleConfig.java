@@ -16,7 +16,7 @@ public class SimpleConfig extends Config {
 	}
 
 	public boolean shouldThrowIllegal(Context context) {
-		return context.counter > 20;
+		return true;
 	}
 
 	public boolean shouldThrowIO(Context context) {
@@ -28,11 +28,11 @@ public class SimpleConfig extends Config {
 	}
 
 	public boolean shouldWriteLogWarn(Context context) {
-		return context.counter % 5 == 0;
+		return false;
 	}
 
 	public boolean shouldWriteLogError(Context context) {
-		return context.counter % 8 == 0;
+		return false;
 	}
 
 	public boolean shouldSuicide() {
@@ -48,7 +48,7 @@ public class SimpleConfig extends Config {
 	}
 
 	public boolean shouldDoIoCpuIntensiveLogic(Context context) {
-		return context.counter % 6 == 0;
+		return false;
 	}
 
 	public void updateContext(Context context) {
