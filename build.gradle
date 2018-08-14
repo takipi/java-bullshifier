@@ -32,7 +32,8 @@ run {
 		"switcher-max-routes",
 		"methods-per-class",
 		"entry-points",
-		"io-cpu-intensive-matrix-size"
+		"io-cpu-intensive-matrix-size",
+		"skip-logic-code"
 	]
 	
 	availableCommandLineArguments.each {
