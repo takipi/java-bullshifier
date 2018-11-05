@@ -72,7 +72,7 @@ public class AppGenerator {
 		}
 		
 		if (commandLine."skip-logic-code") {
-			Config.shouldLogicCode = false
+			Config.shouldGenerateLogicCode = false
 		}
 		
 		if (!Config.rootDirectory.isDirectory()) {
@@ -152,7 +152,7 @@ public class AppGenerator {
 
 		println "\tGenerating dynamic code"
 
-		classes.each({ it.generateMethods(classes, Config.shouldLogicCode, true, true, true)})
+		classes.each({ it.generateMethods(classes, Config.shouldGenerateLogicCode, true, true, true)})
 
 		println "\tWriting ${classes.size()} classes"
 
