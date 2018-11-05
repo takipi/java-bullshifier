@@ -30,5 +30,5 @@ public class Config {
     
     public static ioCpuIntensiveMatrixSize = 300
     public static ioCpuIntensiveFileLimit = 100
-    public static shouldLogicCode = true 
+    public static shouldGenerateLogicCode = true 
 }
