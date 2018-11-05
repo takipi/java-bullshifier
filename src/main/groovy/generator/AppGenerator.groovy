@@ -70,7 +70,11 @@ public class AppGenerator {
 		if (commandLine."io-cpu-intensive-matrix-size") {
 			Config.ioCpuIntensiveMatrixSize = commandLine."io-cpu-intensive-matrix-size"
 		}
-
+		
+		if (commandLine."skip-logic-code") {
+			Config.shouldLogicCode = false
+		}
+		
 		if (!Config.rootDirectory.isDirectory()) {
 			Config.rootDirectory.mkdirs()
 		}
@@ -148,7 +152,7 @@ public class AppGenerator {
 
 		println "\tGenerating dynamic code"
 
-		classes.each({ it.generateMethods(classes, true, true, true, true)})
+		classes.each({ it.generateMethods(classes, Config.shouldLogicCode, true, true, true)})
 
 		println "\tWriting ${classes.size()} classes"
 
@@ -291,5 +295,9 @@ public class AppGenerator {
 			args:1,
 			argName:"number",
 			"matrix size to use for io/cpu intensive logic (defaults to $Config.ioCpuIntensiveMatrixSize")
+
+		commandLineOptions._(
+			longOpt:"skip-logic-code",
+			"set for generate without logic code")
 	}
 }
