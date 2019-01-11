@@ -6,9 +6,9 @@ public class BridgeGenerator {
 
 		def swtichMethods = randomMethods(classes, Config.bridgeSwitchSize)
 
+		lines += "Config.get().updateContext(context);"
 		lines += EventGenerator.addEvent()
 		lines += ""
-		lines += "Config.get().updateContext(context);"
 		lines += "int methodToCall = Config.get().getRandom().nextInt(${swtichMethods.size()});"
 		lines += ""
 		lines += addSwitch(swtichMethods)

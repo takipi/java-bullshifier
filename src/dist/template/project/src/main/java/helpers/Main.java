@@ -61,6 +61,15 @@ public class Main
 			runCount = parseInt(cmd.getOptionValue("run-count"), runCount);
 		}
 		
+		if (cmd.hasOption("frames-count-range")) {
+			int[] framesCountRange = parseRange(cmd.getOptionValue("frames-count-range"), (new int[] { 0, 10 }));
+
+			if (framesCountRange != null) {
+				System.out.println("Setting frames range " + framesCountRange[0] + ".." + framesCountRange[1]);
+				Config.get().setFramesRangeFromCommandLine(framesCountRange);
+			}
+		}
+		
 		boolean singleThread = false;
 		
 		if (cmd.hasOption("single-thread")) {
@@ -208,6 +217,7 @@ public class Main
 		try {
 			return Long.parseLong(str);
 		} catch (Exception e) {
+			System.out.println("Error parsing long " + str);
 			return defaultValue;
 		}
 	}
@@ -216,8 +226,40 @@ public class Main
 		try {
 			return Integer.parseInt(str);
 		} catch (Exception e) {
+			System.out.println("Error parsing int " + str);
 			return defaultValue;
 		}
+	}
+	
+	public static int[] parseRange(String str, int[] defaultValue)
+	{
+		if (str == null) {
+			System.out.println("Parse range error: null");
+			return defaultValue;
+		}
+		
+		int from = defaultValue[0];
+		int to = defaultValue[1];
+		
+		if (str.indexOf("..") == -1) {
+			from = parseInt(str, defaultValue[0]);
+			to = from;
+		} else {
+			String[] parts = str.split("\\.\\.");
+			
+			if (parts == null || parts.length != 2) {
+				System.out.println("Parse range error: invalid format: " + str);
+				return defaultValue;
+			}
+			
+			from = parseInt(parts[0], from);
+			to = parseInt(parts[1], to);
+		}
+		
+		int[] result = new int[2];
+		result[0] = from;
+		result[1] = to;
+		return result;
 	}
 	
 	private static Options createCommandLineOptions() {
@@ -232,6 +274,7 @@ public class Main
 		options.addOption("wm", "warmup-millis", true, "Time to wait before starting to throw exceptions (in millis) (default to 0)");
 		options.addOption("im", "interval-millis", true, "Time between exceptions (in millis) (default to 1000)");
 		options.addOption("rc", "run-count", true, "The number of times to run all (default to 1)");
+		options.addOption("fcr", "frames-count-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
 		
 		return options;
 	}

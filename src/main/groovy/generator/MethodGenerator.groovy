@@ -34,8 +34,8 @@ public class MethodGenerator {
 		code.append(lines.join("\n"))
 	}
 
-	def addEvent() {
-		def lines = EventGenerator.addEvent()
+	private def addEvent() {
+		// should move the logic in BridgeGenerator
 	}
 
 	private def generate() {

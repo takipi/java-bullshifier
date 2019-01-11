@@ -15,7 +15,7 @@ public class SimpleConfig extends Config {
 		return false;
 	}
 
-	public boolean shouldThrowIllegal(Context context) {
+	public boolean internalShouldThrowIllegal(Context context) {
 		return true;
 	}
 

@@ -27,7 +27,7 @@ public class ComplexConfig extends Config {
 	}
 
 	@Override
-	public boolean shouldThrowIllegal(Context context) {
+	public boolean internalShouldThrowIllegal(Context context) {
 		boolean shouldThrowIllegal = Config.getRandom().nextBoolean();
 		updateEventCounter(shouldThrowIllegal);
 		
