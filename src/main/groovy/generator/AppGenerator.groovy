@@ -160,7 +160,7 @@ public class AppGenerator {
 		Utils.ant.replace(file:"$projectDir/src/main/java/helpers/Config.java", token:"@CONFIG_CLASS@", value:Config.configClassToUse)
 		Utils.ant.replace(file:"$projectDir/src/main/java/helpers/MyServlet.java", token:"@SWITCHER_CLASS_NAME@", value:switcherClassName)
 
-		println "\tWriting entrypoints"
+		println "\tWriting entrypoints ${Config.entryPointNum}"
 		EntryPointGenerator.write(generatedDir.parentFile, switcherClassName)
 
 		println "\tWriting gradle configurations"
