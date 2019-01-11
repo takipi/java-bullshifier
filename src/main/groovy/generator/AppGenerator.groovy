@@ -75,6 +75,13 @@ public class AppGenerator {
 			Config.shouldGenerateLogicCode = false
 		}
 		
+		def singleProjectName = "tester"
+		
+		if (commandLine."name")
+		{
+			singleProjectName = commandLine."name"
+		}
+		
 		if (!Config.rootDirectory.isDirectory()) {
 			Config.rootDirectory.mkdirs()
 		}
@@ -89,6 +96,7 @@ public class AppGenerator {
 			generateSubProjects(Config.rootDirectory, Config.subprojectsCount)
 		} else {
 			generateProject(Config.rootDirectory, "")
+			GradleSettingsGenerator.write(Config.rootDirectory, singleProjectName, [])
 		}
 
 		println "Done All!"
@@ -223,6 +231,12 @@ public class AppGenerator {
 			args:1,
 			argName:"dir",
 			"Output directory for the generated application")
+
+		commandLineOptions._(
+			longOpt:"name",
+			args:1,
+			argName:"str",
+			"The name of the output jar")
 
 		commandLineOptions._(
 			longOpt:"classes",
