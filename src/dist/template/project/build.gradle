@@ -35,6 +35,9 @@ compileJava {
 
 fatJar {
 	zip64 = true
+	manifest {
+		attributes 'Main-Class': 'helpers.Main'
+	}
 }
 
 project.ext.set("mainClass", "helpers.Main")
