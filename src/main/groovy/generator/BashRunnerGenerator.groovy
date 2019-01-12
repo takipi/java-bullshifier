@@ -27,7 +27,7 @@ host_name=`hostname`
 
 for ((i=1;i<=\$processes_count;i++)); do
 	deploymentName=\$((\$i%5))
-	deploymentName="sticky-path-$projectName-\$deploymentName-\$host_name"
+	deploymentName="$projectName-\$deploymentName-\$host_name"
 	
 	echo "Running agent number \$i"
 	date
