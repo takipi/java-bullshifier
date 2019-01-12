@@ -9,10 +9,10 @@ class ClassGenerator {
 	private def ClassGenerator(classId) {
 		def packageParts = Utils.rand.nextInt(Config.maxPackageLength) + 1
 		this.classId = classId
-		this.name = Utils.generateName("Cls", "", (Utils.rand.nextInt(10) + 4))
+		this.name = Utils.generateName("", "", (Utils.rand.nextInt(10) + 4), true, false)
 		this.classPackage = "generated." + (0..packageParts).collect(
 		{
-			return Utils.generateName("", "", (Utils.rand.nextInt(3) + 2), false)
+			return Utils.generateName("", "", (Utils.rand.nextInt(3) + 2), false, true)
 		}).join(".")
 	}
 
@@ -34,7 +34,7 @@ class ClassGenerator {
 		def methodCounter = 0
 
 		methods.each {
-			it.addMethodId(methodCounter++)
+			it.addClassAndMethodId(classId, methodCounter++)
 
 			if (withLocals) {
 				it.addLocals()

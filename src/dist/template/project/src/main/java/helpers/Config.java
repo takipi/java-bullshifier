@@ -82,5 +82,5 @@ public abstract class Config
 	public abstract boolean shouldRunAway(Context context);
 	public abstract boolean shouldThrowSomething(int methodId, int classId);
 	public abstract boolean shouldDoIoCpuIntensiveLogic(Context context);
-	public abstract void updateContext(Context context);
+	public abstract void updateContext(Context context, int classId, int methodId);
 }

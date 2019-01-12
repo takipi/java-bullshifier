@@ -7,11 +7,12 @@ public class MethodGenerator {
 
 	private def MethodGenerator(owner) {
 		this.owner = owner
-		this.name = Utils.generateName("met", "", (Utils.rand.nextInt(10) + 4))
+		this.name = Utils.generateName("", "", (Utils.rand.nextInt(10) + 4), false, false)
 	}
 
-	private def addMethodId(methodId) {
+	public def addClassAndMethodId(classId, methodId) {
 		code.append("\t\tint methodId = $methodId;\n")
+		code.append("\t\tConfig.get().updateContext(context, $classId, $methodId);")
 	}
 
 	private def addLocals() {

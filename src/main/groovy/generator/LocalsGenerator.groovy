@@ -46,7 +46,7 @@ public class LocalsGenerator
 		def limit = Utils.rand.nextInt(2)+1;
 
 		for (int i = 0; i < limit; i++) {
-				def localValueName = Utils.generateName("val");
+				def localValueName = Utils.generateName("val", "", 10, true, true);
 				result += generateLocalsInternal(localValueName, deep + 1);
 				result += "${name}.add($localValueName);"
 		}
@@ -66,7 +66,7 @@ public class LocalsGenerator
 		def limit = Utils.rand.nextInt(2)+1;
 
 		for (int i = 0; i < limit; i++) {
-			def localValueName = Utils.generateName("val");
+			def localValueName = Utils.generateName("val", "", 10, true, true);
 			result += generateLocalsInternal(localValueName, deep + 1);
 			result += "${name}.add($localValueName);"
 		}
@@ -83,7 +83,7 @@ public class LocalsGenerator
 	}
 
 	private static generateArrayInternal(arrName ,size ,deep) {
-		def localValueName = Utils.generateName("val");
+		def localValueName = Utils.generateName("val", "", 10, true, true);
 
 		def result = [];
 		
@@ -110,8 +110,8 @@ public class LocalsGenerator
 		def limit = Utils.rand.nextInt(2)+1;
 
 		for (int i = 0; i < limit; i++) {
-			def localValueName = Utils.generateName("mapVal")
-			def localKeyName = Utils.generateName("mapKey")
+			def localValueName = Utils.generateName("mapVal", "", 10, true, true)
+			def localKeyName = Utils.generateName("mapKey", "", 10, true, true)
 			result += generateLocalsInternal(localValueName, deep + 1);
 			result += generateLocalsInternal(localKeyName, deep + 1);
 			result += "${mapName}.put(\"$localValueName\",\"$localKeyName\" );" 
@@ -123,7 +123,7 @@ public class LocalsGenerator
 
 	private static generateString(stringName) {
 		def result = [];
-		def varStrValue = Utils.generateName("Str");
+		def varStrValue = Utils.generateName("Str", "", 10, true, true);
 		result += "String $stringName = \"$varStrValue\";"
 		result += ""
 		return result;

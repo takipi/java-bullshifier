@@ -86,6 +86,10 @@ public class AppGenerator {
 			Config.rootDirectory.mkdirs()
 		}
 
+		if (!Utils.loadNamesFromFile()) {
+			println "Using random numbers"
+		}
+		
 		def isMultiProject = Config.subprojectsCount > 1
 
 		println "Start generating $Config.subprojectsCount projects"
@@ -111,7 +115,7 @@ public class AppGenerator {
 		}
 		
 		(1..subprojectsCount).each {
-			def projectName = Utils.generateName("Proj")
+			def projectName = Utils.generateName("Proj", "", 10, true, true)
 
 			generateProject(Config.rootDirectory, projectName)
 			projectNames += projectName

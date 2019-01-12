@@ -89,7 +89,8 @@ public class ComplexConfig extends Config {
 	}
 
 	@Override
-	public void updateContext(Context context) {
+	public void updateContext(Context context, int classId, int methodId) {
 		context.counter++;
+		context.addPath(classId, methodId);
 	}
 }
