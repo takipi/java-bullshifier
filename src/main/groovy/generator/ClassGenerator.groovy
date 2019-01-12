@@ -81,6 +81,7 @@ class ClassGenerator {
 
 import helpers.Config;
 import helpers.Context;
+import helpers.BullshifierException;
 import java.util.*;
 import java.util.logging.*;
 import org.slf4j.Logger;

@@ -129,9 +129,7 @@ public class Main
 					}
 				}
 				catch (Exception e) {
-					if (!hideStackTraces) {
-						e.printStackTrace();
-					}
+					handleException(e, hideStackTraces, false);
 				}
 				
 				long intervalStartMillis = System.currentTimeMillis();
@@ -145,11 +143,7 @@ public class Main
 								try {
 									call.get();
 								} catch (Exception e) {
-									if (!hideStackTraces) {
-										if (e.getCause() != null) {
-											e.getCause().printStackTrace();
-										}
-									}
+									handleException(e, hideStackTraces, true);
 								}
 								
 								tasksCompleted++;
@@ -190,11 +184,7 @@ public class Main
 					tasksCompleted++;
 					call.get();
 				} catch (Exception e) {
-					if (!hideStackTraces) {
-						if (e.getCause() != null) {
-							e.getCause().printStackTrace();
-						}
-					}
+					handleException(e, hideStackTraces, true);
 				}
 				
 				if (tasksCompleted > 0 && (tasksCompleted % printStatusEvery) == 0) {
@@ -216,6 +206,30 @@ public class Main
 		long endMillis = System.currentTimeMillis();
 		long diffMillis = (endMillis - startMillis);
 		System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + tasksCompleted + " exceptions");
+	}
+	
+	private static void handleException(Exception exception, boolean hideStackTraces, boolean nested) {
+		if (nested) {
+			if (exception.getCause() instanceof Exception) {
+				exception = (Exception) exception.getCause();
+			}
+		}
+		
+		if (!(exception instanceof BullshifierException)) {
+			exception.printStackTrace();
+			return;
+		}
+		
+		BullshifierException bex = (BullshifierException) exception;
+		
+		if (!hideStackTraces) {
+			exception.printStackTrace();
+			return;
+		}
+		
+		if (bex != null) {
+			System.out.println(bex.getContext());
+		}
 	}
 
 	public static long parseLong(String str, long defaultValue) {

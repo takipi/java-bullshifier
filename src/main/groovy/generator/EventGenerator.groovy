@@ -35,7 +35,7 @@ class EventGenerator {
 		lines += "			{\n"
 		lines += "			   	try\n"
 		lines += "				  {\n"
-		lines += "				  	throw new IllegalStateException(\"Time for exception, context is \" + context);\n"
+		lines += "				  	throw new BullshifierException(context);\n"
 		lines += "		  		}\n"
 		lines += "			   	catch (Exception e)\n"
 		lines += "				  {\n"
@@ -47,7 +47,7 @@ class EventGenerator {
 	}
 
 	static generateRunTimeException() {
-		return "				throw new IllegalStateException(\"Time for Illegal state exception, context is \" + context);\n"
+		return "				throw new BullshifierException(context);\n"
 	}
 
 	static generateThrowableException() {
