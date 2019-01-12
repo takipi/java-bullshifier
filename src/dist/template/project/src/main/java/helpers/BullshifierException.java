@@ -11,4 +11,9 @@ public class BullshifierException extends Exception {
 	{
 		return context;
 	}
+	
+	@Override
+	public String toString() {
+		return context == null ? "context is null" : "context is: " + context.toString();
+	}
 }
