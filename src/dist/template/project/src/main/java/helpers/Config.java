@@ -31,6 +31,15 @@ public abstract class Config
 		}
 	}
 	
+	public int framesRangeFrom = -1;
+	public int framesRangeTo = -1;
+	public boolean isStickyBridge;
+	
+	public Config()
+	{
+		
+	}
+	
 	public static void setFramesRangeFromCommandLine(int[] framesCountRange) {
 		if ((framesCountRange == null) ||
 			(framesCountRange.length != 2)) {
@@ -43,9 +52,6 @@ public abstract class Config
 		
 		Config.get().setFramesRange(from, to);
 	}
-	
-	public int framesRangeFrom = -1;
-	public int framesRangeTo = -1;
 	
 	public void setFramesRange(int from, int to) {
 		if (from < 0) {
@@ -70,6 +76,14 @@ public abstract class Config
 		}
 		
 		return context.victomFrame <= context.counter;
+	}
+	
+	public void setStickyBridge(boolean isStickyBridge) {
+		this.isStickyBridge = isStickyBridge;
+	}
+	
+	public boolean isStickyBridge() {
+		return isStickyBridge;
 	}
 
 	public abstract boolean shouldThrow1000();

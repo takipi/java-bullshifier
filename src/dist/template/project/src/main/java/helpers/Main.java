@@ -61,8 +61,8 @@ public class Main
 			runCount = parseInt(cmd.getOptionValue("run-count"), runCount);
 		}
 		
-		if (cmd.hasOption("frames-count-range")) {
-			int[] framesCountRange = parseRange(cmd.getOptionValue("frames-count-range"), (new int[] { 0, 10 }));
+		if (cmd.hasOption("frames-range")) {
+			int[] framesCountRange = parseRange(cmd.getOptionValue("frames-range"), (new int[] { 0, 10 }));
 
 			if (framesCountRange != null) {
 				System.out.println("Setting frames range " + framesCountRange[0] + ".." + framesCountRange[1]);
@@ -76,6 +76,10 @@ public class Main
 			singleThread = true;
 		}
 		
+		if (cmd.hasOption("sticky-bridge")) {
+			Config.get().setStickyBridge(true);
+		}
+		
 		boolean hideStackTraces = false;
 		
 		if (cmd.hasOption("hide-stacktraces")) {
@@ -83,10 +87,11 @@ public class Main
 		}
 		
 		System.out.println(String.format(
-			"Throwing %d exceptions every %dms. starting at %dms from the beginning (%d threads) (%s stacktraces)",
+			"Throwing %d exceptions every %dms. starting at %dms from the beginning (%d threads) (%s stacktraces) (%s sticky bridge)",
 			exceptionsCount, intervalMillis, warmupMillis, 
 			singleThread ? 1 : threadCount,
-			hideStackTraces ? "hide" : "show"));
+			hideStackTraces ? "hide" : "show",
+			Config.get().isStickyBridge() ? "use" : "non"));
 		
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;
@@ -268,13 +273,14 @@ public class Main
 		options.addOption("h", "help", false, "Print this help");
 		options.addOption("st", "single-thread", false, "Run everything directly from the main thread (default to false)");
 		options.addOption("hs", "hide-stacktraces", false, "Determine whether to print the stack traces of the exceptions (default to false)");
+		options.addOption("sb", "sticky-bridge", false, "Constant paths in the code");
 		options.addOption("pse", "print-status-every", true, "Print to screen every n events (default to Integer.MAX_VALUE)");
 		options.addOption("tc", "thread-count", true, "The number of threads (default to 5)");
 		options.addOption("ec", "exceptions-count", true, "The number of exceptions to throw (default to 1000)");
 		options.addOption("wm", "warmup-millis", true, "Time to wait before starting to throw exceptions (in millis) (default to 0)");
 		options.addOption("im", "interval-millis", true, "Time between exceptions (in millis) (default to 1000)");
 		options.addOption("rc", "run-count", true, "The number of times to run all (default to 1)");
-		options.addOption("fcr", "frames-count-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
+		options.addOption("fr", "frames-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
 		
 		return options;
 	}

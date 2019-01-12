@@ -41,7 +41,7 @@ class ClassGenerator {
 			}
 
 			if (withEvent) {
-				it.addEvent()
+				it.addEvents()
 			}
 
 			if (withBridge) {

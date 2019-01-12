@@ -1,24 +1,45 @@
 package generator;
 
 public class BridgeGenerator {
-	private static generate(classes) {
+	public static generate(methodName, classes) {
 		def lines = []
 
 		def swtichMethods = randomMethods(classes, Config.bridgeSwitchSize)
 
 		lines += ""
-		lines += EventGenerator.addEvent()
+		lines += addMethodToCallCalculation(methodName, swtichMethods.size())
 		lines += ""
-		lines += "int methodToCall = Config.get().getRandom().nextInt(${swtichMethods.size()});"
-		lines += ""
-		lines += addSwitch(swtichMethods)
+		lines += addSwitch(methodName, swtichMethods)
 		lines += ""
 		lines += "if (Boolean.parseBoolean(\"true\")) { return; }"
 		lines += ""
 
 		return lines
 	}
-
+	
+	public static getMethodToCallVariableName(methodName) {
+		return "${methodName}MethodToCall"
+	}
+	
+	private static addMethodToCallCalculation(methodName, methodsCount)
+	{
+		def methodToCallVariableName = getMethodToCallVariableName(methodName)
+		
+		return [
+			"if (Config.get().isStickyBridge())",
+			"{",
+			"	if ($methodToCallVariableName == -1)",
+			"	{",
+			"		$methodToCallVariableName = Config.get().getRandom().nextInt($methodsCount);",
+			"	}",
+			"}",
+			"else",
+			"{",
+			"	$methodToCallVariableName = Config.get().getRandom().nextInt($methodsCount);",
+			"}"
+		]
+	}
+	
 	private static randomMethods(classes, bridgeSwitchSize) {
 		return (1..bridgeSwitchSize).collect({
 			def classIndex = Utils.rand.nextInt(classes.size())
@@ -26,9 +47,11 @@ public class BridgeGenerator {
 		})
 	}
 
-	private static addSwitch(swtichMethods) {
+	private static addSwitch(methodName, swtichMethods) {
+		def methodToCallVariableName = getMethodToCallVariableName(methodName)
+		
 		def switcher = [
-			"switch (methodToCall)",
+			"switch ($methodToCallVariableName)",
 			"{"
 		]
 
