@@ -1,7 +1,7 @@
 #/bin/bash
 
 declare current_dir=`pwd`
-declare bullshifier_name="black"
+declare bullshifier_name="white"
 
 ./gradlew run -Pskip-logic-code \
     -Pname=$bullshifier_name \
@@ -13,10 +13,10 @@ declare bullshifier_name="black"
     -Plog-info-per-method=1 \
     -Plog-warn-per-method=0 \
     -Plog-error-per-method=0 \
-    -Pbridge-switch-size=10 \
-    -Pswitcher-max-routes=200 \
-    -Pentry-points=20 \
-    -Pclasses=2000 || exit 1
+    -Pbridge-switch-size=2 \
+    -Pswitcher-max-routes=10 \
+    -Pentry-points=1 \
+    -Pclasses=10 || exit 1
 
 echo "Compiling"
 cd $bullshifier_name && ./gradlew fatJar
@@ -28,4 +28,3 @@ echo "To execute the new tester run:"
 echo ""
 echo "java -cp $current_dir/$bullshifier_name/build/libs/$bullshifier_name.jar helpers.Main"
 echo ""
-

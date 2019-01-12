@@ -76,8 +76,15 @@ public class Main
 			singleThread = true;
 		}
 		
-		if (cmd.hasOption("sticky-bridge")) {
-			Config.get().setStickyBridge(true);
+		if (cmd.hasOption("sticky-path")) {
+			Config.get().setStickyPath(true);
+		}
+		
+		if (cmd.hasOption("app-alias")) {
+			Config.get().setStickyPathsDir("sticky-path");
+			System.out.println("Setting sticky path persistence at: " + 
+				Config.get().getStickyPathsDir().getAbsolutePath());
+			Config.get().setAppAlias(cmd.getOptionValue("app-alias"));
 		}
 		
 		boolean hideStackTraces = false;
@@ -87,11 +94,12 @@ public class Main
 		}
 		
 		System.out.println(String.format(
-			"Throwing %d exceptions every %dms. starting at %dms from the beginning (%d threads) (%s stacktraces) (%s sticky bridge)",
+			"(Exceptions: %d) (Interval: %dms) (Warmup: %dms) (Threads: %d) (%s stacktraces) (%s sticky bridge) (alias: %s)",
 			exceptionsCount, intervalMillis, warmupMillis, 
 			singleThread ? 1 : threadCount,
 			hideStackTraces ? "hide" : "show",
-			Config.get().isStickyBridge() ? "use" : "non"));
+			Config.get().isStickyPath() ? "use" : "non",
+			Config.get().getAppAlias()));
 		
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;
@@ -228,7 +236,7 @@ public class Main
 		}
 		
 		if (bex != null) {
-			System.out.println(bex.getContext());
+			System.out.println(bex.toString());
 		}
 	}
 
@@ -287,14 +295,15 @@ public class Main
 		options.addOption("h", "help", false, "Print this help");
 		options.addOption("st", "single-thread", false, "Run everything directly from the main thread (default to false)");
 		options.addOption("hs", "hide-stacktraces", false, "Determine whether to print the stack traces of the exceptions (default to false)");
-		options.addOption("sb", "sticky-bridge", false, "Constant paths in the code");
+		options.addOption("sp", "sticky-path", false, "Constant paths in the code");
 		options.addOption("pse", "print-status-every", true, "Print to screen every n events (default to Integer.MAX_VALUE)");
 		options.addOption("tc", "thread-count", true, "The number of threads (default to 5)");
 		options.addOption("ec", "exceptions-count", true, "The number of exceptions to throw (default to 1000)");
 		options.addOption("wm", "warmup-millis", true, "Time to wait before starting to throw exceptions (in millis) (default to 0)");
 		options.addOption("im", "interval-millis", true, "Time between exceptions (in millis) (default to 1000)");
 		options.addOption("rc", "run-count", true, "The number of times to run all (default to 1)");
-		options.addOption("fr", "frames-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
+		options.addOption("fc", "frames-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
+		options.addOption("aa", "app-alias", true, "Used by sticky path, for persistence");
 		
 		return options;
 	}

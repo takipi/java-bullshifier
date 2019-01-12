@@ -50,4 +50,18 @@ public class Context
 		
 		path.add(classAndMethodId);
 	}
+	
+	public String toPathString() {
+		StringBuilder sb = new StringBuilder();
+		
+		for (int i = 0; i < path.size(); i++) {
+			int[] current = path.get(i);
+			sb.append(">");
+			sb.append(current[0]);
+			sb.append(":");
+			sb.append(current[1]);
+		}
+		
+		return sb.toString();
+	}
 }

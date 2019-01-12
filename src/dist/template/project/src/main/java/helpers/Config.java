@@ -1,5 +1,6 @@
 package helpers;
 
+import java.io.File;
 import java.util.Random;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,7 +34,9 @@ public abstract class Config
 	
 	public int framesRangeFrom = -1;
 	public int framesRangeTo = -1;
-	public boolean isStickyBridge;
+	public boolean isStickyPath;
+	public File stickyPathDir;
+	public String appAlias;
 	
 	public Config()
 	{
@@ -78,12 +81,66 @@ public abstract class Config
 		return context.victomFrame <= context.counter;
 	}
 	
-	public void setStickyBridge(boolean isStickyBridge) {
-		this.isStickyBridge = isStickyBridge;
+	public void setStickyPath(boolean isStickyPath) {
+		this.isStickyPath = isStickyPath;
 	}
 	
-	public boolean isStickyBridge() {
-		return isStickyBridge;
+	public boolean isStickyPath() {
+		return isStickyPath;
+	}
+	
+	public void setStickyPathsDir(String stickyPathDirPath) {
+		if (stickyPathDirPath == null) {
+			System.out.println("Invalid stickyPathDirPath, null");
+			return;
+		}
+		
+		File stickyPathDir = new File(stickyPathDirPath);
+		stickyPathDir.mkdirs();
+		
+		if (!stickyPathDir.isDirectory()) {
+			System.out.println("Provided sticky path dir is not directory: " + stickyPathDir);
+			return;
+		}
+		
+		this.stickyPathDir = stickyPathDir;
+	}
+	
+	public File getStickyPathsDir() {
+		return stickyPathDir;
+	}
+	
+	public String getAppAlias() {
+		return appAlias;
+	}
+	
+	public void setAppAlias(String appAlias) {
+		this.appAlias = appAlias;
+	}
+	
+	public int getStickyPath(int classId, int methodId, int maxNumber) {
+		if (stickyPathDir == null) {
+			return rand.nextInt(maxNumber);
+		}
+		
+		if (appAlias == null) {
+			return rand.nextInt(maxNumber);
+		}
+		
+		int result = StickyPathHelper.getMethodToCall(stickyPathDir, appAlias, classId, methodId);
+		
+		if (result == -1) {
+			int randomNumber = rand.nextInt(maxNumber);
+			
+			if (!StickyPathHelper.persistMethodToCall(
+				stickyPathDir, appAlias, classId, methodId, randomNumber)) {
+				System.out.println("Error persisiting sticky path");
+			}
+			
+			result = randomNumber;
+		}
+		
+		return result;
 	}
 
 	public abstract boolean shouldThrow1000();
