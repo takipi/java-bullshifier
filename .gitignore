@@ -8,4 +8,6 @@ sticky-path
 myApp.log
 output
 report-stats.csv
-
+yellow
+red
+killer
