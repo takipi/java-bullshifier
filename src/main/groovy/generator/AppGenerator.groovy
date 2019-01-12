@@ -99,8 +99,7 @@ public class AppGenerator {
 			Config.rootDirectory.mkdirs()
 			generateSubProjects(Config.rootDirectory, Config.subprojectsCount)
 		} else {
-			generateProject(Config.rootDirectory, "")
-			GradleSettingsGenerator.write(Config.rootDirectory, singleProjectName, [])
+			generateProject(Config.rootDirectory, singleProjectName)
 		}
 
 		println "Done All!"
@@ -116,8 +115,9 @@ public class AppGenerator {
 		
 		(1..subprojectsCount).each {
 			def projectName = Utils.generateName("Proj", "", 10, true, true)
-
-			generateProject(Config.rootDirectory, projectName)
+			def projectDir = "${Config.rootDirectory}/$projectName";
+			
+			generateProject(projectDir, projectName)
 			projectNames += projectName
 			
 			LoaderSwitcherGenerator.write(generatedDir, projectName)
@@ -135,8 +135,7 @@ public class AppGenerator {
 		LoaderMultiSwitcherGenerator.write("$rootDirectory/root/src/main/java", projectNames)
 	}
 
-	private static generateProject(rootDirectory, projectName) {
-		def projectDir = "$rootDirectory/$projectName"
+	private static generateProject(projectDir, projectName) {
 		def generatedDir = new File("$projectDir/src/main/java/$Config.generatedPackage")
 
 		if (!generatedDir.exists()) {
@@ -182,6 +181,10 @@ public class AppGenerator {
 		println "\tWriting gradle configurations"
 
 		GradleSettingsGenerator.write(projectDir, projectName, [])
+		
+		println "\tWriting bash runner"
+		
+		BashRunnerGenerator.write(projectDir, projectName)
 
 		println "\tDone $projectName"
 	}
