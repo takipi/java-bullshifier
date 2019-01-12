@@ -20,7 +20,7 @@ fi
 interval_seconds=\$2
 
 if [ -z "\$interval_seconds" ]; then
-	interval_seconds="1000"
+	interval_seconds="1"
 fi
 
 host_name=`hostname`
