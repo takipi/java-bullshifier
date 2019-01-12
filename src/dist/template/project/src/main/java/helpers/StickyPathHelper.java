@@ -14,7 +14,6 @@ public class StickyPathHelper {
 		}
 		
 		if (!methodToCallFile.canRead()) {
-			System.out.println("Unable to read " + methodToCallFile);
 			return -1;
 		}
 		

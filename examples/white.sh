@@ -1,6 +1,7 @@
 #/bin/bash
 
-declare current_dir=`pwd`
+source examples/colors.sh
+
 declare bullshifier_name="white"
 
 ./gradlew run -Pskip-logic-code \
@@ -18,13 +19,4 @@ declare bullshifier_name="white"
     -Pentry-points=1 \
     -Pclasses=10 || exit 1
 
-echo "Compiling"
-cd $bullshifier_name && ./gradlew fatJar
-
-echo ""
-echo "Done"
-echo ""
-echo "To execute the new tester run:"
-echo ""
-echo "java -cp $current_dir/$bullshifier_name/build/libs/$bullshifier_name.jar helpers.Main"
-echo ""
+finish_bullshifier $bullshifier_name
