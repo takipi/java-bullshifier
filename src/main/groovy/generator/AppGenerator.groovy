@@ -75,10 +75,21 @@ public class AppGenerator {
 			Config.shouldGenerateLogicCode = false
 		}
 		
+		def singleProjectName = "tester"
+		
+		if (commandLine."name")
+		{
+			singleProjectName = commandLine."name"
+		}
+		
 		if (!Config.rootDirectory.isDirectory()) {
 			Config.rootDirectory.mkdirs()
 		}
 
+		if (!Utils.loadNamesFromFile()) {
+			println "Using random numbers"
+		}
+		
 		def isMultiProject = Config.subprojectsCount > 1
 
 		println "Start generating $Config.subprojectsCount projects"
@@ -88,7 +99,7 @@ public class AppGenerator {
 			Config.rootDirectory.mkdirs()
 			generateSubProjects(Config.rootDirectory, Config.subprojectsCount)
 		} else {
-			generateProject(Config.rootDirectory, "")
+			generateProject(Config.rootDirectory, singleProjectName)
 		}
 
 		println "Done All!"
@@ -103,9 +114,10 @@ public class AppGenerator {
 		}
 		
 		(1..subprojectsCount).each {
-			def projectName = Utils.generateName("Proj")
-
-			generateProject(Config.rootDirectory, projectName)
+			def projectName = Utils.generateName("Proj", "", 10, true, true)
+			def projectDir = "${Config.rootDirectory}/$projectName";
+			
+			generateProject(projectDir, projectName)
 			projectNames += projectName
 			
 			LoaderSwitcherGenerator.write(generatedDir, projectName)
@@ -123,8 +135,7 @@ public class AppGenerator {
 		LoaderMultiSwitcherGenerator.write("$rootDirectory/root/src/main/java", projectNames)
 	}
 
-	private static generateProject(rootDirectory, projectName) {
-		def projectDir = "$rootDirectory/$projectName"
+	private static generateProject(projectDir, projectName) {
 		def generatedDir = new File("$projectDir/src/main/java/$Config.generatedPackage")
 
 		if (!generatedDir.exists()) {
@@ -170,6 +181,10 @@ public class AppGenerator {
 		println "\tWriting gradle configurations"
 
 		GradleSettingsGenerator.write(projectDir, projectName, [])
+		
+		println "\tWriting bash runner"
+		
+		BashRunnerGenerator.write(projectDir, projectName)
 
 		println "\tDone $projectName"
 	}
@@ -223,6 +238,12 @@ public class AppGenerator {
 			args:1,
 			argName:"dir",
 			"Output directory for the generated application")
+
+		commandLineOptions._(
+			longOpt:"name",
+			args:1,
+			argName:"str",
+			"The name of the output jar")
 
 		commandLineOptions._(
 			longOpt:"classes",

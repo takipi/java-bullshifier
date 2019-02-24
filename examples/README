@@ -1,0 +1,8 @@
+Generates an example applications using the bullshifier.
+
+Run the various colors scripts in this directory, to get an example app: 
+	white.sh = a light application
+	yellow.sh = a little bit stronger application
+	red.sh = a medium application
+	black.sh = an heavy application
+	killer.sh = an extraordinary heavy application

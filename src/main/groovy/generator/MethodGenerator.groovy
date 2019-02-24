@@ -7,11 +7,12 @@ public class MethodGenerator {
 
 	private def MethodGenerator(owner) {
 		this.owner = owner
-		this.name = Utils.generateName("met", "", (Utils.rand.nextInt(10) + 4))
+		this.name = Utils.generateName("", "", (Utils.rand.nextInt(10) + 4), false, false)
 	}
 
-	private def addMethodId(methodId) {
+	public def addClassAndMethodId(classId, methodId) {
 		code.append("\t\tint methodId = $methodId;\n")
+		code.append("\t\tConfig.get().updateContext(context, $classId, $methodId);\n\n")
 	}
 
 	private def addLocals() {
@@ -29,22 +30,28 @@ public class MethodGenerator {
 	}
 
 	private def addBridge(classes) {
-		def lines = BridgeGenerator.generate(classes).collect({ "\t\t$it" })
+		def lines = BridgeGenerator.generate(name, classes).collect({ "\t\t$it" })
 
 		code.append(lines.join("\n"))
 	}
 
-	def addEvent() {
+	private def addEvents() {
 		def lines = EventGenerator.addEvent()
+		
+		code.append(lines.join("\n"))
 	}
 
 	private def generate() {
 		def codeStr = code.toString()
 
+		def methodToCallVariableName = BridgeGenerator.getMethodToCallVariableName(name)
+		
 		return new StringBuilder()
-			.append("public static void $name(Context context) throws Exception")
-			.append("{")
+			.append("\tprivate static int $methodToCallVariableName = -1;\n")
+			.append("\t\n")
+			.append("\tpublic static void $name(Context context) throws Exception\n")
+			.append("\t{\n")
 			.append(codeStr)
-			.append("}").toString()
+			.append("\t}\n").toString()
 	}
 }

@@ -389,7 +389,7 @@ public class LogicGenerator {
 		def value
 
 		def generate(context) {
-			this.var = Utils.generateName("var");
+			this.var = Utils.generateName("var", "", 10, true, true);
 			this.value = generateValue(this.parent)
 		}
 
@@ -408,7 +408,7 @@ public class LogicGenerator {
 		def function
 
 		def generate(context) {
-			var = Utils.generateName("ret")
+			var = Utils.generateName("ret", "", 10, true, true)
 		}
 
 		def print(tabs) {

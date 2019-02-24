@@ -61,10 +61,30 @@ public class Main
 			runCount = parseInt(cmd.getOptionValue("run-count"), runCount);
 		}
 		
+		if (cmd.hasOption("frames-range")) {
+			int[] framesCountRange = parseRange(cmd.getOptionValue("frames-range"), (new int[] { 0, 10 }));
+
+			if (framesCountRange != null) {
+				System.out.println("Setting frames range " + framesCountRange[0] + ".." + framesCountRange[1]);
+				Config.get().setFramesRangeFromCommandLine(framesCountRange);
+			}
+		}
+		
 		boolean singleThread = false;
 		
 		if (cmd.hasOption("single-thread")) {
 			singleThread = true;
+		}
+		
+		if (cmd.hasOption("sticky-path")) {
+			Config.get().setStickyPath(true);
+		}
+		
+		if (cmd.hasOption("app-alias")) {
+			Config.get().setStickyPathsDir("sticky-path");
+			System.out.println("Setting sticky path persistence at: " + 
+				Config.get().getStickyPathsDir().getAbsolutePath());
+			Config.get().setAppAlias(cmd.getOptionValue("app-alias"));
 		}
 		
 		boolean hideStackTraces = false;
@@ -74,10 +94,12 @@ public class Main
 		}
 		
 		System.out.println(String.format(
-			"Throwing %d exceptions every %dms. starting at %dms from the beginning (%d threads) (%s stacktraces)",
+			"(Exceptions: %d) (Interval: %dms) (Warmup: %dms) (Threads: %d) (%s stacktraces) (%s sticky bridge) (alias: %s)",
 			exceptionsCount, intervalMillis, warmupMillis, 
 			singleThread ? 1 : threadCount,
-			hideStackTraces ? "hide" : "show"));
+			hideStackTraces ? "hide" : "show",
+			Config.get().isStickyPath() ? "use" : "non",
+			Config.get().getAppAlias()));
 		
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;
@@ -115,9 +137,7 @@ public class Main
 					}
 				}
 				catch (Exception e) {
-					if (!hideStackTraces) {
-						e.printStackTrace();
-					}
+					handleException(e, hideStackTraces, false);
 				}
 				
 				long intervalStartMillis = System.currentTimeMillis();
@@ -131,11 +151,7 @@ public class Main
 								try {
 									call.get();
 								} catch (Exception e) {
-									if (!hideStackTraces) {
-										if (e.getCause() != null) {
-											e.getCause().printStackTrace();
-										}
-									}
+									handleException(e, hideStackTraces, true);
 								}
 								
 								tasksCompleted++;
@@ -176,11 +192,7 @@ public class Main
 					tasksCompleted++;
 					call.get();
 				} catch (Exception e) {
-					if (!hideStackTraces) {
-						if (e.getCause() != null) {
-							e.getCause().printStackTrace();
-						}
-					}
+					handleException(e, hideStackTraces, true);
 				}
 				
 				if (tasksCompleted > 0 && (tasksCompleted % printStatusEvery) == 0) {
@@ -203,11 +215,36 @@ public class Main
 		long diffMillis = (endMillis - startMillis);
 		System.out.println("Took: " + (diffMillis - warmupMillisTotal) + " to throw " + tasksCompleted + " exceptions");
 	}
+	
+	private static void handleException(Exception exception, boolean hideStackTraces, boolean nested) {
+		if (nested) {
+			if (exception.getCause() instanceof Exception) {
+				exception = (Exception) exception.getCause();
+			}
+		}
+		
+		if (!(exception instanceof BullshifierException)) {
+			exception.printStackTrace();
+			return;
+		}
+		
+		BullshifierException bex = (BullshifierException) exception;
+		
+		if (!hideStackTraces) {
+			exception.printStackTrace();
+			return;
+		}
+		
+		if (bex != null) {
+			System.out.println(bex.toString());
+		}
+	}
 
 	public static long parseLong(String str, long defaultValue) {
 		try {
 			return Long.parseLong(str);
 		} catch (Exception e) {
+			System.out.println("Error parsing long " + str);
 			return defaultValue;
 		}
 	}
@@ -216,8 +253,40 @@ public class Main
 		try {
 			return Integer.parseInt(str);
 		} catch (Exception e) {
+			System.out.println("Error parsing int " + str);
 			return defaultValue;
 		}
+	}
+	
+	public static int[] parseRange(String str, int[] defaultValue)
+	{
+		if (str == null) {
+			System.out.println("Parse range error: null");
+			return defaultValue;
+		}
+		
+		int from = defaultValue[0];
+		int to = defaultValue[1];
+		
+		if (str.indexOf("..") == -1) {
+			from = parseInt(str, defaultValue[0]);
+			to = from;
+		} else {
+			String[] parts = str.split("\\.\\.");
+			
+			if (parts == null || parts.length != 2) {
+				System.out.println("Parse range error: invalid format: " + str);
+				return defaultValue;
+			}
+			
+			from = parseInt(parts[0], from);
+			to = parseInt(parts[1], to);
+		}
+		
+		int[] result = new int[2];
+		result[0] = from;
+		result[1] = to;
+		return result;
 	}
 	
 	private static Options createCommandLineOptions() {
@@ -226,12 +295,15 @@ public class Main
 		options.addOption("h", "help", false, "Print this help");
 		options.addOption("st", "single-thread", false, "Run everything directly from the main thread (default to false)");
 		options.addOption("hs", "hide-stacktraces", false, "Determine whether to print the stack traces of the exceptions (default to false)");
+		options.addOption("sp", "sticky-path", false, "Constant paths in the code");
 		options.addOption("pse", "print-status-every", true, "Print to screen every n events (default to Integer.MAX_VALUE)");
 		options.addOption("tc", "thread-count", true, "The number of threads (default to 5)");
 		options.addOption("ec", "exceptions-count", true, "The number of exceptions to throw (default to 1000)");
 		options.addOption("wm", "warmup-millis", true, "Time to wait before starting to throw exceptions (in millis) (default to 0)");
 		options.addOption("im", "interval-millis", true, "Time between exceptions (in millis) (default to 1000)");
 		options.addOption("rc", "run-count", true, "The number of times to run all (default to 1)");
+		options.addOption("fc", "frames-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
+		options.addOption("aa", "app-alias", true, "Used by sticky path, for persistence");
 		
 		return options;
 	}

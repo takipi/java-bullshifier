@@ -1,3 +1,13 @@
 .gradle
 build
-
+black
+big
+small
+white
+sticky-path
+myApp.log
+output
+report-stats.csv
+yellow
+red
+killer

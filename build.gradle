@@ -19,6 +19,7 @@ run {
 	def projectProperties = gradle.startParameter.projectProperties
 	
 	def availableCommandLineArguments = [
+		"name",
 		"output-directory", 
 		"classes", 
 		"subprojects", 
