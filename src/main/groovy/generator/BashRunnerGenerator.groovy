@@ -29,20 +29,40 @@ if [ -z "\$deployments_count" ]; then
 	deployments_count="5"
 fi
 
+servers_count=\$4
+
+if [ -z "\$servers_count" ]; then
+	servers_count="1"
+fi
+
+apps_count=\$5
+
+if [ -z "\$apps_count" ]; then
+	apps_count="1"
+fi
+
 host_name=`hostname`
 
 for ((i=1;i<=\$processes_count;i++)); do
 	deploymentName=\$((\$i%\$deployments_count))
-	deploymentName="$projectName-\$deploymentName-\$host_name"
+	deploymentName="$projectName-deployment-\$deploymentName-\$host_name"
+	
+	serverName=\$((\$i%\$servers_count))
+	serverName="$projectName-server-\$serverName-\$host_name"
+	
+	appName=\$((\$i%\$apps_count))
+	appName="$projectName-app-\$appName-\$host_name"
 	
 	echo "Running agent number \$i"
 	date
-	echo java -Dtakipi.name=$projectName -Dtakipi.deployment.name="\$deploymentName" -Xmx10m -Xms10m -cp \$script_dir/build/libs/${projectName}.jar helpers.Main \
+	echo java -Dtakipi.server.name="\$serverName" -Dtakipi.name="\$appName" -Dtakipi.deployment.name="\$deploymentName" \
+			-Xmx10m -Xms10m -cp \$script_dir/build/libs/${projectName}.jar helpers.Main \
 			-ec 1440 -im 60000 -rc 365 -wm 0 -st -hs -sp -fc 10 -aa "$projectName-\$deploymentName"
 	echo ""
 	
-	nohup java -Dtakipi.name=$projectName -Dtakipi.deployment.name="\$deploymentName" -Xmx10m -Xms10m -cp \$script_dir/build/libs/${projectName}.jar helpers.Main \
-			-ec 1440 -im 60000 -rc 365 -wm 0 -st -hs -sp -fc 10 -aa "\$deploymentName" &
+	nohup java -Dtakipi.server.name="\$serverName" -Dtakipi.name="\$appName" -Dtakipi.deployment.name="\$deploymentName" \
+		 -Xmx10m -Xms10m -cp \$script_dir/build/libs/${projectName}.jar helpers.Main \
+		-ec 1440 -im 60000 -rc 365 -wm 0 -st -hs -sp -fc 10 -aa "\$deploymentName" &
 			
 	sleep \$interval_seconds
 done
