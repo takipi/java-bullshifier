@@ -23,10 +23,16 @@ if [ -z "\$interval_seconds" ]; then
 	interval_seconds="1"
 fi
 
+deployments_count=\$3
+
+if [ -z "\$deployments_count" ]; then
+	deployments_count="5"
+fi
+
 host_name=`hostname`
 
 for ((i=1;i<=\$processes_count;i++)); do
-	deploymentName=\$((\$i%5))
+	deploymentName=\$((\$i%\$deployments_count))
 	deploymentName="$projectName-\$deploymentName-\$host_name"
 	
 	echo "Running agent number \$i"
