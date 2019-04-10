@@ -111,7 +111,9 @@ public class StatsReporter {
 		statMap.put("latency", doLatency());
 
 		addHeapStats(statMap);
-		addMoreStats(statMap);
+		
+		// doesn't work well with java9
+		// addMoreStats(statMap);
 
 		// String jsonReport = toJson(statMap);
 		String csvReport = toCsv(statMap);
