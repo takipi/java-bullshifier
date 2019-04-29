@@ -23,23 +23,36 @@ if [ -z "\$interval_seconds" ]; then
 	interval_seconds="1"
 fi
 
-deployments_count=\$3
-
-if [ -z "\$deployments_count" ]; then
-	deployments_count="5"
-fi
-
-servers_count=\$4
+servers_count=\$3
 
 if [ -z "\$servers_count" ]; then
 	servers_count="1"
 fi
 
-apps_count=\$5
+apps_count=\$4
 
 if [ -z "\$apps_count" ]; then
 	apps_count="1"
 fi
+
+deployments_count=\$5
+
+if [ -z "\$deployments_count" ]; then
+	deployments_count="5"
+fi
+
+interval_between_exceptions=\$6
+
+if [ -z "\$interval_between_exceptions" ]; then
+	interval_between_exceptions="60000"
+fi
+
+echo "Processes count: \$processes_count"
+echo "Sleep between processes: \$interval_seconds"
+echo "Servers: \$servers_count"
+echo "Agents: \$apps_count"
+echo "Deployments: \$deployments_count"
+echo "Interval between exceptions: \$interval_between_exceptions"
 
 host_name=`hostname`
 
@@ -57,12 +70,12 @@ for ((i=1;i<=\$processes_count;i++)); do
 	date
 	echo java -Dtakipi.server.name="\$serverName" -Dtakipi.name="\$appName" -Dtakipi.deployment.name="\$deploymentName" \
 			-Xmx10m -Xms10m -cp \$script_dir/build/libs/${projectName}.jar helpers.Main \
-			-ec 1440 -im 60000 -rc 365 -wm 0 -st -hs -sp -fc 10 -aa "$projectName-\$deploymentName"
+			-ec 1440 -im \$interval_between_exceptions -rc 36500000 -wm 0 -st -hs -sp -fc 10 -aa "$projectName-\$deploymentName"
 	echo ""
 	
 	nohup java -Dtakipi.server.name="\$serverName" -Dtakipi.name="\$appName" -Dtakipi.deployment.name="\$deploymentName" \
 		 -Xmx10m -Xms10m -cp \$script_dir/build/libs/${projectName}.jar helpers.Main \
-		-ec 1440 -im 60000 -rc 365 -wm 0 -st -hs -sp -fc 10 -aa "\$deploymentName" &
+		-ec 1440 -im \$interval_between_exceptions -rc 36500000 -wm 0 -st -hs -sp -fc 10 -aa "\$deploymentName" &
 			
 	sleep \$interval_seconds
 done
