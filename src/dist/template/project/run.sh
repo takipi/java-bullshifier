@@ -20,7 +20,7 @@ declare intervalMillis=60000
 declare extraJVMArgs=""
 declare sleepSeconds=0
 declare appType="Undefined"
-declare framesCount=10
+declare appUuid="ffffffff-ffff-ffff-ffff-ffffffffffff"
 
 function parse_command_line()
 {
@@ -66,17 +66,6 @@ function parse_command_line()
 	fi
 }
 
-function load_config()
-{
-	if [ -r "APP_TYPE" ]; then
-		appType=$(cat APP_TYPE)
-	fi
-	
-	if [ -r "FRAMES_COUNT" ]; then
-		framesCount=$(cat FRAMES_COUNT)
-	fi
-}
-
 function get_deployment_name()
 {
 	local appName=$1
@@ -93,13 +82,20 @@ function get_deployment_name()
 function run_bullshifiers()
 {
 	parse_command_line $@
-	load_config
 	
 	local millisInHour=3600000
 	
 	if [ "$intervalMillis" -gt "$millisInHour" ]; then
 		echo "Interval millis max reached: $$intervalMillis (max: $millisInHour)"
 		return 1
+	fi
+	
+	if [ -r "APP_TYPE" ]; then
+		appType=$(cat APP_TYPE)
+	fi
+	
+	if [ -r "APP_UUID" ]; then
+		appUuid=$(cat APP_UUID)
 	fi
 	
 	let exceptionCount="$millisInHour/$intervalMillis"
@@ -118,25 +114,17 @@ function run_bullshifiers()
 		local deploymentIndex=$(($i%$deploymentsCount))
 		local deploymentName=$(get_deployment_name $appName $appDataDir)
 		
-		echo "serverName=$serverName"
-		echo "appName=$appName"
-		echo "deploymentName=$deploymentName"
-		echo "serverName=$intervalMillis"
-		echo "runningCount=$runningCount"
-		echo "exceptionCount=$exceptionCount"
-		echo "intervalMillis=$intervalMillis"
-		echo "processHeapSize=$processHeapSize"
-		echo "extraJVMArgs=$extraJVMArgs"
-		
 		local nameParams="-Dtakipi.server.name=$serverName -Dtakipi.name=$appName -Dtakipi.deployment.name=$deploymentName"
 		local javaHeapSize="-Xmx$processHeapSize -Xms$processHeapSize"
 		local jarName="$script_dir/build/libs/${appType}.jar"
-		local appPlan="-rc $runningCount -ec $exceptionCount -im $intervalMillis"
-		local appConfig="-st -hs -wm 0 -sp -fc $framesCount"
-		local command="$JAVA_HOME/bin/java $nameParams $javaHeapSize -jar $jarName $appPlan $appConfig -aa $appDataDir"
+		local durationPlan="--run-count $runningCount --exceptions-count $exceptionCount --interval-millis $intervalMillis"
+		local behaviourPlan="--sticky-path $appDataDir"
+		local uuidParam="--sticky-path $appDataDir"
+		local appConfig="--single-thread --hide-stacktraces --warmup-millis 0 --frames-range 10"
+		local command="$JAVA_HOME/bin/java -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
 		
 		if [ "$dryRun" == "false" ]; then
-			# nohup $command &
+			nohup $command &
 			sleep $sleepSeconds
 		else
 			echo "nohup $command &"
@@ -146,17 +134,3 @@ function run_bullshifiers()
 }
 
 run_bullshifiers $@
-
-# 	deploymentName="deployment-$deploymentName"
-	
-
-	
-# 	echo "Running agent number $i"
-# 	date
-# 	echo java -Dtakipi.server.name="$serverName" -Dtakipi.name="$appName" -Dtakipi.deployment.name="$deploymentName" 			-Xmx10m -Xms10m -cp $script_dir/build/libs/black.jar helpers.Main 			-ec 1440 -im $interval_between_exceptions -rc 36500000 -wm 0 -st -hs -sp -fc 50..51 -aa "$deploymentName"
-# 	echo ""
-	
-# 	nohup java -Dtakipi.server.name="$serverName" -Dtakipi.name="$appName" -Dtakipi.deployment.name="$deploymentName" 		 -Xmx10m -Xms10m -cp $script_dir/build/libs/black.jar helpers.Main 		-ec 1440 -im $interval_between_exceptions -rc 36500000 -wm 0 -st -hs -sp -fc 50..51 -aa "$deploymentName" &
-			
-# 	sleep $interval_millis
-# done

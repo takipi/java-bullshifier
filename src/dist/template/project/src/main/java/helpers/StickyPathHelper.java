@@ -6,8 +6,8 @@ import java.io.FileOutputStream;
 import java.io.BufferedReader;
 
 public class StickyPathHelper {
-	public static int getMethodToCall(File stickyPathDir, String appAlias, int classId, int methodId) {
-		File methodToCallFile = getMethodToCallFile(stickyPathDir, appAlias, classId, methodId);
+	public static int getMethodToCall(File stickyPathDir, int classId, int methodId) {
+		File methodToCallFile = getMethodToCallFile(stickyPathDir, classId, methodId);
 		
 		if (methodToCallFile == null) {
 			return -1;
@@ -47,8 +47,8 @@ public class StickyPathHelper {
 	}
 	
 	public static boolean persistMethodToCall(File stickyPathDir, 
-		String appAlias, int classId, int methodId, int methodToCall) {
-		File methodToCallFile = getMethodToCallFile(stickyPathDir, appAlias, classId, methodId);
+		int classId, int methodId, int methodToCall) {
+		File methodToCallFile = getMethodToCallFile(stickyPathDir, classId, methodId);
 		
 		if (methodToCallFile == null) {
 			return false;
@@ -73,15 +73,14 @@ public class StickyPathHelper {
 	}
 	
 	public static File getMethodToCallFile(File stickyPathDir, 
-		String appAlias, int classId, int methodId) {
-		File appDir = new File(stickyPathDir, appAlias);
-		appDir.mkdirs();
+		int classId, int methodId) {
+		stickyPathDir.mkdirs();
 		
-		if (!appDir.isDirectory()) {
-			System.out.println("App dir is not a directory " + appDir);
+		if (!stickyPathDir.isDirectory()) {
+			System.out.println("Sticky path dir is not a directory " + stickyPathDir);
 			return null;
 		}
 		
-		return new File(appDir, classId + ":" + methodId);
+		return new File(stickyPathDir, classId + ":" + methodId);
 	}
 }

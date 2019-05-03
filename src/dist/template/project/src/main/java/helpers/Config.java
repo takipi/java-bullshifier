@@ -36,7 +36,6 @@ public abstract class Config
 	public int framesRangeTo = -1;
 	public boolean isStickyPath;
 	public File stickyPathDir;
-	public String appAlias;
 	
 	public Config()
 	{
@@ -110,30 +109,18 @@ public abstract class Config
 		return stickyPathDir;
 	}
 	
-	public String getAppAlias() {
-		return appAlias;
-	}
-	
-	public void setAppAlias(String appAlias) {
-		this.appAlias = appAlias;
-	}
-	
 	public int getStickyPath(int classId, int methodId, int maxNumber) {
 		if (stickyPathDir == null) {
 			return rand.nextInt(maxNumber);
 		}
 		
-		if (appAlias == null) {
-			return rand.nextInt(maxNumber);
-		}
-		
-		int result = StickyPathHelper.getMethodToCall(stickyPathDir, appAlias, classId, methodId);
+		int result = StickyPathHelper.getMethodToCall(stickyPathDir, classId, methodId);
 		
 		if (result == -1) {
 			int randomNumber = rand.nextInt(maxNumber);
 			
 			if (!StickyPathHelper.persistMethodToCall(
-				stickyPathDir, appAlias, classId, methodId, randomNumber)) {
+				stickyPathDir, classId, methodId, randomNumber)) {
 				System.out.println("Error persisiting sticky path");
 			}
 			

@@ -26,17 +26,7 @@ public class BridgeGenerator {
 		def methodToCallVariableName = getMethodToCallVariableName(methodName)
 		
 		return [
-			"if (Config.get().isStickyPath())",
-			"{",
-			"	if ($methodToCallVariableName == -1)",
-			"	{",
-			"		$methodToCallVariableName = Config.get().getStickyPath(classId, methodId, $methodsCount);",
-			"	}",
-			"}",
-			"else",
-			"{",
-			"	$methodToCallVariableName = Config.get().getRandom().nextInt($methodsCount);",
-			"}"
+			"$methodToCallVariableName = Config.get().getStickyPath(classId, methodId, $methodsCount);"
 		]
 	}
 	

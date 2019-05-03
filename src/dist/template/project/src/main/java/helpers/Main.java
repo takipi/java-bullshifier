@@ -77,14 +77,7 @@ public class Main
 		}
 		
 		if (cmd.hasOption("sticky-path")) {
-			Config.get().setStickyPath(true);
-		}
-		
-		if (cmd.hasOption("app-alias")) {
-			Config.get().setStickyPathsDir("sticky-path");
-			System.out.println("Setting sticky path persistence at: " + 
-				Config.get().getStickyPathsDir().getAbsolutePath());
-			Config.get().setAppAlias(cmd.getOptionValue("app-alias"));
+			Config.get().setStickyPathsDir(cmd.getOptionValue("sticky-path"));
 		}
 		
 		boolean hideStackTraces = false;
@@ -94,12 +87,11 @@ public class Main
 		}
 		
 		System.out.println(String.format(
-			"(Exceptions: %d) (Interval: %dms) (Warmup: %dms) (Threads: %d) (%s stacktraces) (%s sticky bridge) (alias: %s)",
+			"(Exceptions: %d) (Interval: %dms) (Warmup: %dms) (Threads: %d) (%s stacktraces) (sticky path: %s)",
 			exceptionsCount, intervalMillis, warmupMillis, 
 			singleThread ? 1 : threadCount,
 			hideStackTraces ? "hide" : "show",
-			Config.get().isStickyPath() ? "use" : "non",
-			Config.get().getAppAlias()));
+			Config.get().getStickyPathsDir()));
 		
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;
@@ -295,7 +287,6 @@ public class Main
 		options.addOption("h", "help", false, "Print this help");
 		options.addOption("st", "single-thread", false, "Run everything directly from the main thread (default to false)");
 		options.addOption("hs", "hide-stacktraces", false, "Determine whether to print the stack traces of the exceptions (default to false)");
-		options.addOption("sp", "sticky-path", false, "Constant paths in the code");
 		options.addOption("pse", "print-status-every", true, "Print to screen every n events (default to Integer.MAX_VALUE)");
 		options.addOption("tc", "thread-count", true, "The number of threads (default to 5)");
 		options.addOption("ec", "exceptions-count", true, "The number of exceptions to throw (default to 1000)");
@@ -303,7 +294,7 @@ public class Main
 		options.addOption("im", "interval-millis", true, "Time between exceptions (in millis) (default to 1000)");
 		options.addOption("rc", "run-count", true, "The number of times to run all (default to 1)");
 		options.addOption("fc", "frames-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
-		options.addOption("aa", "app-alias", true, "Used by sticky path, for persistence");
+		options.addOption("sp", "sticky-path", true, "A path to store constant paths in the code");
 		
 		return options;
 	}
