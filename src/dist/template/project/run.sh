@@ -13,7 +13,6 @@ declare processesCount=5
 declare hostnamePrefix="hostname-"
 declare serversCount=5
 declare appsCount=2
-declare deploymentsCount=1
 declare dryRun="false"
 declare processHeapSize=10m
 declare intervalMillis=60000
@@ -38,9 +37,6 @@ function parse_command_line()
 
 	params_add "apps-count" "ac" "$appsCount" "appsCount" "expect_value" \
 			"Number of apps"
-
-	params_add "deployments-count" "dc" "$deploymentsCount" "deploymentsCount" "expect_value" \
-			"Number of deployments"
 
 	params_add "hostname-prefix" "host" "$hostnamePrefix" "hostnamePrefix" "expect_value" \
 			"A prefix to append to all server names"
@@ -111,7 +107,6 @@ function run_bullshifiers()
 		local appDataDir="$emulatorDataDir/$appName"
 		mkdir -p "$appDataDir"
 		
-		local deploymentIndex=$(($i%$deploymentsCount))
 		local deploymentName=$(get_deployment_name $appName $appDataDir)
 		
 		local nameParams="-Dtakipi.server.name=$serverName -Dtakipi.name=$appName -Dtakipi.deployment.name=$deploymentName"
