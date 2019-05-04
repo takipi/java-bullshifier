@@ -30,22 +30,16 @@ public class EventsSpot {
 		
 		if (spotPurpose < 50)
 		{
-			System.out.println("spotPurpose < 50: " + spotPurpose);
 			return 0;
 		}
 		
 		if (spotPurpose > 95)
 		{
-			System.out.println("spotPurpose > 95: " + spotPurpose);
 			return 100;
 		}
 		
 		int spotStrengh = 10 - (spotPurpose % 10);
 		int spotLuck = Math.abs(rand.nextInt() % 100);
-		
-		System.out.println("spotStrengh: " + spotStrengh + ", spotLuck: " + spotLuck + 
-			", percentege1: " + (spotPurpose / spotStrengh) +
-			", percentege2: " + spotLuck % (spotPurpose / spotStrengh));
 		
 		return Math.abs(spotLuck % (spotPurpose / spotStrengh));
 	}
