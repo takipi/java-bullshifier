@@ -5,9 +5,11 @@ import java.util.ArrayList;
 
 public class Context
 {
-	public int counter = 0;
-	public Integer victomFrame = null;
+	public int framesDepth = 0;
 	public List<int[]> path = new ArrayList<int[]>();
+	public int classId = 0;
+	public int methodId = 0;
+	public int lastSpotPrecentage;
 
 	public Context() { }
 	
@@ -15,8 +17,10 @@ public class Context
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		
-		result.append("(frames: ");
-		result.append(counter);
+		result.append("(fail-rate: ");
+		result.append(lastSpotPrecentage);
+		result.append("%) (frames: ");
+		result.append(framesDepth);
 		result.append(", path: [");
 		
 		for (int i = 0; i < path.size(); i++) {
@@ -43,6 +47,9 @@ public class Context
 	
 	public void addPath(int classId, int methodId)
 	{
+		this.classId = classId;
+		this.methodId = methodId;
+		
 		int[] classAndMethodId = new int[2];
 		
 		classAndMethodId[0] = classId;

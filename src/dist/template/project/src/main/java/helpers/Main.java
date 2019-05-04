@@ -80,6 +80,10 @@ public class Main
 			Config.get().setStickyPathsDir(cmd.getOptionValue("sticky-path"));
 		}
 		
+		if (cmd.hasOption("events-spot")) {
+			Config.get().setEventSpotDir(cmd.getOptionValue("events-spot"));
+		}
+		
 		boolean hideStackTraces = false;
 		
 		if (cmd.hasOption("hide-stacktraces")) {
@@ -87,11 +91,12 @@ public class Main
 		}
 		
 		System.out.println(String.format(
-			"(Exceptions: %d) (Interval: %dms) (Warmup: %dms) (Threads: %d) (%s stacktraces) (sticky path: %s)",
+			"(Exceptions: %d) (Interval: %dms) (Warmup: %dms) (Threads: %d) (%s stacktraces) (sticky path: %s) (event spot: %s)",
 			exceptionsCount, intervalMillis, warmupMillis, 
 			singleThread ? 1 : threadCount,
 			hideStackTraces ? "hide" : "show",
-			Config.get().getStickyPathsDir()));
+			Config.get().getStickyPathsDir(),
+			Config.get().getEventSpotDir()));
 		
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;
@@ -295,6 +300,7 @@ public class Main
 		options.addOption("rc", "run-count", true, "The number of times to run all (default to 1)");
 		options.addOption("fc", "frames-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
 		options.addOption("sp", "sticky-path", true, "A path to store constant paths in the code");
+		options.addOption("es", "events-spot", true, "A path to store events spot");
 		
 		return options;
 	}

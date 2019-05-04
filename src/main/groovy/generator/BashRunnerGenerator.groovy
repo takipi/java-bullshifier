@@ -7,5 +7,8 @@ public class BashRunnerGenerator {
 		
 		appUuidFile.write(UUID.randomUUID().toString())
 		appTypeFile.write(projectName)
+		
+		Utils.ant.chmod(file:"$outputDirectory/run.sh", perm:"+x")
+		Utils.ant.chmod(file:"$outputDirectory/increment-deployment.sh", perm:"+x")
 	}
 }

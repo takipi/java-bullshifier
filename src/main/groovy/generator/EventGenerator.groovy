@@ -105,7 +105,7 @@ class EventGenerator {
 						EventGenerator.generateLogError() + [
 			"		}",
 			"",
-			"		if (Config.get().shouldThrowIllegal(context))",
+			"		if (Config.get().shouldFireEvent(context))",
 			"		{"] +
 						EventGenerator.generateRunTimeException() + [
 			"		}",

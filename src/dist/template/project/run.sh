@@ -118,7 +118,7 @@ function run_bullshifiers()
 		local javaHeapSize="-Xmx$processHeapSize -Xms$processHeapSize"
 		local jarName="$script_dir/build/libs/${appType}.jar"
 		local durationPlan="--run-count $runningCount --exceptions-count $exceptionCount --interval-millis $intervalMillis"
-		local behaviourPlan="--sticky-path $appDataDir"
+		local behaviourPlan="--sticky-path $appDataDir/sticky-path --events-spot $appDataDir/events-spot"
 		local uuidParam="--sticky-path $appDataDir"
 		local appConfig="--single-thread --hide-stacktraces --warmup-millis 0 --frames-range 10"
 		local command="$JAVA_HOME/bin/java -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
