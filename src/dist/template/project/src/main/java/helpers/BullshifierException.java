@@ -1,5 +1,6 @@
 package helpers;
 
+import helpers.Config;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,8 +38,18 @@ public class BullshifierException extends Exception {
 		String pathString = context.toPathString();
 		AtomicInteger pathCounter = pathToCounterMap.get(pathString);
 		
-		return "unique ex: " + pathToCounterMap.size() +
-			", happened: " + pathCounter.toString() + " times" +
+		Integer entryPointNum = Config.get().entryPointIndex.get();
+		
+		if (entryPointNum == null)
+		{
+			entryPointNum = -1;
+		}
+		
+		String eventId = Integer.toString(entryPointNum) + ":" + context.classId + ":" + context.methodId;
+		
+		return "unique events: " + pathToCounterMap.size() +
+			", events id: " + eventId +
+			", hits: " + pathCounter.toString() + " times" +
 			", context is: " + context.toString();
 	}
 }

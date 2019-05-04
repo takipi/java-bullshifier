@@ -76,6 +76,7 @@ public class EntryPointGenerator {
 			public Object call() throws Exception {				
 				long startTime = System.currentTimeMillis();
 				try {
+					Config.get().entryPointIndex.set($i);
 					${addCallToSwitcher(i, switcherClassName)}
 				}
 				finally {

@@ -36,6 +36,7 @@ public abstract class Config
 	public int framesRangeTo = -1;
 	public File stickyPathDir;
 	public File eventSpotDir;
+	public ThreadLocal<Integer> entryPointIndex = new ThreadLocal<>();
 	
 	public Config()
 	{
