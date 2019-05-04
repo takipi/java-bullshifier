@@ -116,7 +116,8 @@ function run_bullshifiers()
 		local behaviourPlan="--sticky-path $appDataDir/sticky-path --events-spot $appDataDir/events-spot"
 		local uuidParam="--sticky-path $appDataDir"
 		local appConfig="--single-thread --hide-stacktraces --warmup-millis 0 --frames-range 50"
-		local command="$JAVA_HOME/bin/java -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
+		local jvmInternalParams="-XX:CICompilerCount=2 -XX:ParallelGCThreads=1"
+		local command="$JAVA_HOME/bin/java $jvmInternalParams -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
 		
 		if [ "$dryRun" == "false" ]; then
 			nohup $command &
