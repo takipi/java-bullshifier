@@ -41,7 +41,7 @@ public class MethodGenerator {
 	}
 
 	private def addEvents() {
-		def lines = EventGenerator.addEvent()
+		def lines = EventGenerator.addEvent(owner.name, name)
 		
 		code.append(lines.join("\n"))
 		code.append("\n")

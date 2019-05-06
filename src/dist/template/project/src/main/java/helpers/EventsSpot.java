@@ -11,12 +11,13 @@ public class EventsSpot {
 	
 	public static boolean shouldFireEvent(File spotDataDir, Context context) {
 		int currentLuck = Math.abs(rand.nextInt() % 100);
-		Integer spotPrecentage = loadSpotData(spotDataDir, context.classId, context.methodId);
+		Integer spotPrecentage = loadSpotData(spotDataDir, 
+				context.entryPointId, context.classId, context.methodId, context.instructionIndex);
 		
 		if (spotPrecentage == null)
 		{
 			spotPrecentage = generateSpotData();
-			saveSpotData(spotDataDir, context.classId, context.methodId, spotPrecentage);
+			saveSpotData(spotDataDir, context.entryPointId, context.classId, context.methodId, context.instructionIndex, spotPrecentage);
 		}
 		
 		context.lastSpotPrecentage = spotPrecentage;
@@ -44,9 +45,9 @@ public class EventsSpot {
 		return Math.abs(spotLuck % (spotPurpose / spotStrengh));
 	}
 	
-	private static Integer loadSpotData(File spotDataDir, int classId, int methodId)
+	private static Integer loadSpotData(File spotDataDir, int entryPointId, int classId, int methodId, int instructionIndex)
 	{
-		File spotDataFile = getSpotDataFile(spotDataDir, classId, methodId);
+		File spotDataFile = getSpotDataFile(spotDataDir, entryPointId, classId, methodId, instructionIndex);
 		
 		if (spotDataFile == null) {
 			return null;
@@ -85,9 +86,9 @@ public class EventsSpot {
 		}
 	}
 	
-	private static boolean saveSpotData(File spotDataDir, int classId, int methodId, int spotPrecentage)
+	private static boolean saveSpotData(File spotDataDir, int entryPointId, int classId, int methodId, int instructionIndex, int spotPrecentage)
 	{
-		File spotDataFile = getSpotDataFile(spotDataDir, classId, methodId);
+		File spotDataFile = getSpotDataFile(spotDataDir, entryPointId, classId, methodId, instructionIndex);
 		
 		if (spotDataFile == null) {
 			return false;
@@ -111,7 +112,7 @@ public class EventsSpot {
 		}
 	}
 	
-	public static File getSpotDataFile(File spotDataDir, int classId, int methodId) {
+	public static File getSpotDataFile(File spotDataDir, int entryPointId, int classId, int methodId, int instructionIndex) {
 		spotDataDir.mkdirs();
 		
 		if (!spotDataDir.isDirectory()) {
@@ -119,6 +120,6 @@ public class EventsSpot {
 			return null;
 		}
 		
-		return new File(spotDataDir, classId + ":" + methodId);
+		return new File(spotDataDir, entryPointId + ":" + classId + ":" + methodId + ":" + instructionIndex);
 	}
 }

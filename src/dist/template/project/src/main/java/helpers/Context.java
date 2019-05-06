@@ -16,13 +16,14 @@ public class Context
 	public int classId = 0;
 	public int methodId = 0;
 	public int entryPointId = 0;
+	public int instructionIndex = 0;
 	public int lastSpotPrecentage;
 
 	public Context() { }
 	
 	public String getRequestId()
 	{
-		return String.format("%d:%d:%d", entryPointId, classId, methodId);
+		return String.format("%d:%d:%d:%d", entryPointId, classId, methodId, instructionIndex);
 	}
 	
 	public String getLocationId()
