@@ -108,13 +108,13 @@ function run_bullshifiers()
 		mkdir -p "$appDataDir"
 		
 		local deploymentName=$(get_deployment_name $appName $appDataDir)
+		appDataDir="$appDataDir/$deploymentName"
 		
 		local nameParams="-Dtakipi.server.name=$serverName -Dtakipi.name=$appName -Dtakipi.deployment.name=$deploymentName"
 		local javaHeapSize="-Xmx$processHeapSize -Xms$processHeapSize"
 		local jarName="$script_dir/build/libs/${appType}.jar"
 		local durationPlan="--run-count $runningCount --exceptions-count $exceptionCount --interval-millis $intervalMillis"
-		local behaviourPlan="--sticky-path $appDataDir/sticky-path --events-spot $appDataDir/events-spot"
-		local uuidParam="--sticky-path $appDataDir"
+		local behaviourPlan="--sticky-path $appDataDir/stack-traces --events-spot $appDataDir/errors"
 		local appConfig="--single-thread --hide-stacktraces --warmup-millis 0 --frames-range 50"
 		local jvmInternalParams="-XX:CICompilerCount=2 -XX:ParallelGCThreads=1"
 		local command="$JAVA_HOME/bin/java $jvmInternalParams -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"

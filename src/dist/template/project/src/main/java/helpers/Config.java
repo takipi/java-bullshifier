@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-public abstract class Config
+public class Config
 {
 	public static Random rand = new Random();
 
@@ -26,14 +26,14 @@ public abstract class Config
 				return instance;
 			}
 
-			instance = new SimpleConfig();
+			instance = new Config();
 
 			return instance;
 		}
 	}
 	
-	public int framesRangeFrom = -1;
-	public int framesRangeTo = -1;
+	public int framesRangeFrom = 0;
+	public int framesRangeTo = 10;
 	public File stickyPathDir;
 	public File eventSpotDir;
 	public ThreadLocal<Integer> entryPointIndex = new ThreadLocal<>();
@@ -134,7 +134,7 @@ public abstract class Config
 	
 	public boolean shouldFireEvent(Context context) {
 		if (eventSpotDir == null) {
-			return context.framesDepth < framesRangeTo;
+			return context.framesDepth > framesRangeTo;
 		}
 		
 		return EventsSpot.shouldFireEvent(eventSpotDir, context);
@@ -144,17 +144,32 @@ public abstract class Config
 		return context.framesDepth > framesRangeTo;
 	}
 	
-	public void updateContext(Context context, int classId, int methodId) {
+	public void updateContext(Context context, int entryPointId, int classId, int methodId) {
 		context.framesDepth++;
+		context.entryPointId = entryPointId;
+		context.classId = classId;
+		context.methodId = methodId;
 		context.addPath(classId, methodId);
+		Context.incInvCount(context);
 	}
 	
-	public abstract boolean shouldThrow1000();
-	public abstract boolean shouldThrowIO(Context context);
-	public abstract boolean shouldWriteLogInfo(Context context);
-	public abstract boolean shouldWriteLogWarn(Context context);
-	public abstract boolean shouldWriteLogError(Context context);
-	public abstract boolean shouldSuicide();
-	public abstract boolean shouldThrowSomething(int methodId, int classId);
-	public abstract boolean shouldDoIoCpuIntensiveLogic(Context context);
+	public boolean shouldWriteLogInfo(Context context) {
+		return true;
+	}
+
+	public boolean shouldWriteLogWarn(Context context) {
+		return false;
+	}
+
+	public boolean shouldWriteLogError(Context context) {
+		return true;
+	}
+
+	public boolean shouldSuicide() {
+		return false;
+	}
+	
+	public boolean shouldDoIoCpuIntensiveLogic(Context context) {
+		return false;
+	}
 }

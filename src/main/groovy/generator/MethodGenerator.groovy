@@ -5,21 +5,26 @@ public class MethodGenerator {
 	private def name
 	private def code = new StringBuilder()
 
-	private def MethodGenerator(owner) {
+	private def MethodGenerator(owner, methodId) {
 		this.owner = owner
-		this.name = Utils.generateName("", "", (Utils.rand.nextInt(10) + 4), false, false)
+		def paddedMethodId = String.format("%03d", methodId);
+		this.name = "method$paddedMethodId"
 	}
 
 	public def addClassAndMethodId(classId, methodId) {
 		code.append("\t\tint methodId = $methodId;\n")
-		code.append("\t\tConfig.get().updateContext(context, $classId, $methodId);\n\n")
+		code.append("\t\tInteger entryPointNum = Config.get().entryPointIndex.get();")
+		code.append("\t\tConfig.get().updateContext(context, entryPointNum, $classId, $methodId);\n\n")
 	}
 
 	private def addLocals() {
-		def logic = LocalsGenerator.generateLocals()
-		def lines = logic.collect({ "\t\t$it" })
-
+		def locals = LocalsGenerator.generateLocals()
+		def lines = locals.collect({ "\t\t$it" })
+		
+		code.append("\t\t// Start of fake locals generator\n")
 		code.append(lines.join("\n"))
+		code.append("// End of fake locals generator\n")
+		code.append("\n")
 	}
 
 	private def addLogic() {
@@ -39,6 +44,7 @@ public class MethodGenerator {
 		def lines = EventGenerator.addEvent()
 		
 		code.append(lines.join("\n"))
+		code.append("\n")
 	}
 
 	private def generate() {
@@ -47,11 +53,10 @@ public class MethodGenerator {
 		def methodToCallVariableName = BridgeGenerator.getMethodToCallVariableName(name)
 		
 		return new StringBuilder()
-			.append("\tprivate static int $methodToCallVariableName = -1;\n")
-			.append("\t\n")
 			.append("\tpublic static void $name(Context context) throws Exception\n")
 			.append("\t{\n")
 			.append(codeStr)
+			.append("\n")
 			.append("\t}\n").toString()
 	}
 }

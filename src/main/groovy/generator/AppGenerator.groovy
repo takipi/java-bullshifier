@@ -59,10 +59,6 @@ public class AppGenerator {
 			Config.entryPointNum = Integer.parseInt(commandLine."entry-points")
 		}
 		
-		if (commandLine."config-class") {
-			Config.configClassToUse = commandLine."config-class"
-		}
-
 		if (commandLine."template-directory") {
 			Config.templateDirectory = commandLine."template-directory"
 		}
@@ -172,7 +168,6 @@ public class AppGenerator {
 		println "\tWriting switcher"
 
 		def switcherClassName = SwitcherGenerator.write(classes, generatedDir.parentFile, projectName)
-		Utils.ant.replace(file:"$projectDir/src/main/java/helpers/Config.java", token:"@CONFIG_CLASS@", value:Config.configClassToUse)
 		Utils.ant.replace(file:"$projectDir/src/main/java/helpers/MyServlet.java", token:"@SWITCHER_CLASS_NAME@", value:switcherClassName)
 
 		println "\tWriting entrypoints ${Config.entryPointNum}"
@@ -195,8 +190,10 @@ public class AppGenerator {
 		  def methodsCount = Config.methodsPerClass
 		  def clazz = new ClassGenerator(it)
 
+		  	def methodCounter = 0
+		  	
 			(1..methodsCount).each {
-				clazz.addMethod()
+				clazz.addMethod(methodCounter++)
 			}
 
 			return clazz
@@ -298,12 +295,6 @@ public class AppGenerator {
 			args:1,
 			argName:"number",
 			"Number of entry points")
-		
-		commandLineOptions._(
-			longOpt:"config-class",
-			args:1,
-			argName:"class name",
-			"The name of the config class (default to SimpleConfig)")
 		
 		commandLineOptions._(
 			longOpt:"template-directory",

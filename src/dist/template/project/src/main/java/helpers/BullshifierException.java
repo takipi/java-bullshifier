@@ -6,22 +6,29 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BullshifierException extends Exception {
-	private static final ConcurrentMap<String, AtomicInteger> pathToCounterMap =
+	private static final ConcurrentMap<String, AtomicInteger> hitsCounterMap =
 		new ConcurrentHashMap<String, AtomicInteger>();
 		
 	private final Context context;
+	private final int totalUniqueEvents;
 	
-	public BullshifierException(Context context) {
+	public static BullshifierException build(Context context)
+	{
+		int hits = BullshifierException.getHitCount(context);
+		int invs = Context.getInvCount(context);
+		double failRate = (double) hits / (double) invs * 100;
+		int failRateInt = (int)failRate;
+		
+		String message = String.format("(Event: %s) (Hits: %d) (Invs: %d) (Fail Rate: %d%%)",
+				context.getRequestId(), hits, invs, failRateInt);
+		
+		return new BullshifierException(context, message);
+	}
+	
+	public BullshifierException(Context context, String message) {
+		super(message);
 		this.context = context;
-		
-		String pathString = context.toPathString();
-		
-		if (!pathToCounterMap.containsKey(pathString)) {
-			pathToCounterMap.putIfAbsent(pathString, new AtomicInteger());
-		}
-		
-		AtomicInteger pathCounter = pathToCounterMap.get(pathString);
-		pathCounter.addAndGet(1);
+		this.totalUniqueEvents = hitsCounterMap.size();
 	}
 	
 	public Context getContext()
@@ -29,27 +36,28 @@ public class BullshifierException extends Exception {
 		return context;
 	}
 	
+	public static void incHitsCount(Context context)
+	{
+		String requestId = context.getRequestId();
+		
+		if (!hitsCounterMap.containsKey(requestId)) {
+			hitsCounterMap.putIfAbsent(requestId, new AtomicInteger());
+		}
+		
+		AtomicInteger hitsCounter = hitsCounterMap.get(requestId);
+		hitsCounter.addAndGet(1);
+	}
+	
+	public static int getHitCount(Context context)
+	{
+		AtomicInteger hitsCounter = hitsCounterMap.get(context.getRequestId());
+		Integer hits = hitsCounter.get();
+		return hits == null ? -1 : hits;
+	}
+	
 	@Override
 	public String toString() {
-		if (context == null) {
-			return "context is null";
-		}
 		
-		String pathString = context.toPathString();
-		AtomicInteger pathCounter = pathToCounterMap.get(pathString);
-		
-		Integer entryPointNum = Config.get().entryPointIndex.get();
-		
-		if (entryPointNum == null)
-		{
-			entryPointNum = -1;
-		}
-		
-		String eventId = Integer.toString(entryPointNum) + ":" + context.classId + ":" + context.methodId;
-		
-		return "unique events: " + pathToCounterMap.size() +
-			", events id: " + eventId +
-			", hits: " + pathCounter.toString() + " times" +
-			", context is: " + context.toString();
+		return getMessage();
 	}
 }

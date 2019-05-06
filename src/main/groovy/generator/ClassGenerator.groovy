@@ -7,17 +7,18 @@ class ClassGenerator {
 	private def classId
 
 	private def ClassGenerator(classId) {
-		def packageParts = Utils.rand.nextInt(Config.maxPackageLength) + 1
+		def packageParts = 4
 		this.classId = classId
-		this.name = Utils.generateName("", "", (Utils.rand.nextInt(10) + 4), true, false)
+		def paddedClassId = String.format("%06d", classId);
+		this.name = "Class$paddedClassId"
 		this.classPackage = "generated." + (0..packageParts).collect(
 		{
-			return Utils.generateName("", "", (Utils.rand.nextInt(3) + 2), false, true)
+			return Utils.generateName("", "", 4, false, true)
 		}).join(".")
 	}
 
-	private def addMethod() {
-		def method = new MethodGenerator(this)
+	private def addMethod(methodId) {
+		def method = new MethodGenerator(this, methodId)
 
 		methods += method
 	}
@@ -87,12 +88,15 @@ import java.util.logging.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
-
+import java.text.SimpleDateFormat;
 
 public class $name
 {
-	 public static final int classId = $classId;
-	 static final Logger logger = LoggerFactory.getLogger(${name}.class);
+	public static final Logger logger = LoggerFactory.getLogger(${name}.class);
+	
+	public static final int classId = $classId;
+	public static final SimpleDateFormat dateFormat = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ssZ\");
+	
 """
 	}
 }
