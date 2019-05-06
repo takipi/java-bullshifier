@@ -78,7 +78,7 @@ public class EntryPointGenerator {
 				String serverName = System.getProperty("takipi.server.name");
 				String agentName = System.getProperty("takipi.name");
 				String deploymentName = System.getProperty("takipi.deployment.name");
-				System.out.println("Putting mds " + serverName);
+				
 				MDC.put("server", serverName);
 				MDC.put("agent", agentName);
 				MDC.put("deployment", deploymentName);
