@@ -1,7 +1,7 @@
 @echo off
 REM assuming we're at "java-bullshifier\examples" and output to "java-bullshifier\output"
 
-set bullshifier_name=white
+set bullshifier_name=yellow
 set output_directory=output\%bullshifier_name%
 cd ..
 echo Generating %bullshifier_name% bullshifier...
@@ -16,9 +16,9 @@ call gradlew run -Pskip-logic-code ^
 	-Plog-warn-per-method=0 ^
 	-Plog-error-per-method=0 ^
 	-Pbridge-switch-size=2 ^
-	-Pswitcher-max-routes=10 ^
-	-Pentry-points=1 ^
-	-Pclasses=10 
+	-Pswitcher-max-routes=50 ^
+	-Pentry-points=5 ^
+	-Pclasses=100
 echo Compiling %bullshifier_name% bullshifier...
 cd %output_directory%
 call gradlew fatJar
