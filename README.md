@@ -18,8 +18,8 @@ An open source project by [OverOps](https://www.overops.com).
 
 ## Run settings
 * `./gradlew run` (default parameters, generates one jar with 10 classes)
-* `cd output && gradle fatJar` to build the generated project
-* `java -cp output/build/libs/tester.jar helpers.Main` to run it
+* `cd output ; ./gradlew fatJar` to build the generated project
+* `cd ..; java -cp output/build/libs/tester.jar helpers.Main` to run it
 
 Or, you can simply run `./scripts/small.sh`, or `./scripts/big.sh`, with preconfigured run settings.
 
