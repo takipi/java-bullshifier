@@ -42,27 +42,11 @@ FROM openjdk:8-jre-slim
 
 ARG COLOR="yellow"
 
-# COPY --from=bulshifier-colors ./white/build/libs/white.jar ./white/white.jar
-# COPY --from=bulshifier-colors ./white/run.sh ./white/run.sh
-
-# COPY --from=bulshifier-colors ./yellow/build/libs/yellow.jar ./yellow/yellow.jar
-# COPY --from=bulshifier-colors /yellow/run.sh ./yellow/run.sh
-
-# COPY --from=bulshifier-colors ./red/build/libs/red.jar ./red/red.jar
-# COPY --from=bulshifier-colors ./red/run.sh ./red/run.sh
-
-# COPY --from=bulshifier-colors ./black/build/libs/black.jar ./black/black.jar
-# COPY --from=bulshifier-colors ./black/run.sh ./black/run.sh
-
 COPY --from=bulshifier-colors /white ./white
 COPY --from=bulshifier-colors /yellow ./yellow
 COPY --from=bulshifier-colors /red ./red
 COPY --from=bulshifier-colors /black ./black
-# RUN chmod +x ./black/run.sh ./red/run.sh /yellow/run.sh ./white/run.sh
-
 COPY --from=agent /takipi/ /opt/takipi/
-
-# WORKDIR ${COLOR}
 
 # set default environmental variables
 ENV TAKIPI_COLLECTOR_HOST=collector
@@ -71,5 +55,4 @@ ENV IS_DAEMON=true
 ENV JAVA_TOOL_OPTIONS=-agentpath:/opt/takipi/lib/libTakipiAgent.so=takipi.debug.logconsole
 
 WORKDIR "${COLOR}"
-# CMD ls -l ./java 
-ENTRYPOINT ["/bin/bash", "./run.sh", "--processes-count 1"]
+ENTRYPOINT ["/bin/bash", "./run.sh", "--processes-count 1", "run-in-container"]
