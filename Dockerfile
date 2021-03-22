@@ -40,8 +40,6 @@ RUN curl -sL ${AGENT_URL}-${AGENT_VERSION}.tar.gz | tar -xvzf -
 
 FROM openjdk:8-jre-slim
 
-ARG COLOR="yellow"
-
 COPY --from=bulshifier-colors /white ./white
 COPY --from=bulshifier-colors /yellow ./yellow
 COPY --from=bulshifier-colors /red ./red
@@ -49,10 +47,12 @@ COPY --from=bulshifier-colors /black ./black
 COPY --from=agent /takipi/ /opt/takipi/
 
 # set default environmental variables
+ENV COLOR=white
 ENV TAKIPI_COLLECTOR_HOST=collector
 ENV TAKIPI_COLLECTOR_PORT=6060
 ENV IS_DAEMON=true
 ENV JAVA_TOOL_OPTIONS=-agentpath:/opt/takipi/lib/libTakipiAgent.so=takipi.debug.logconsole
 
-WORKDIR "${COLOR}"
-ENTRYPOINT ["/bin/bash", "./run.sh", "--processes-count 1", "run-in-container"]
+WORKDIR $COLOR
+
+ENTRYPOINT ["/bin/bash", "./run.sh", "--run-in-container"]
