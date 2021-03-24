@@ -45,3 +45,24 @@ There are some additional options that give you fine grained control over the ge
 
 
 If you’d like to learn more, feel free to reach out for a deeper walkthrough (hello@overops.com). Default settings are no logs, and an exception on every 10th frame in the call stack.
+
+
+## Docker Quick start
+In simple cases the following command will allow for local execution of the image. If running backend and collector also in docker see "advance" networking section.
+
+```console
+docker run -d --rm -e TAKIPI_COLLECTOR_HOST=<collector_hostname>  -e TAKIPI_COLLECTOR_PORT=6060 -e TAKIPI_APPLICATION_NAME=java-bullshifier -e TAKIPI_DEPLOYMENT_NAME=deployment1 -e TAKIPI_SERVER_NAME=DEV -e COLOR=white/yellow/red/black overops-java-bullshifier:latest
+```
+Note: Depending if you built or pulled the image your Image name may vary! 
+
+## Docker: Advance Networking
+If running multiple components in separate docker images (i.e. Backend and collector), it is recommend running with a docker network to allow for communications:
+
+If not already created, create a docker network and start the image on the network:
+
+```console
+docker network create --driver bridge overops
+
+docker run -d --rm --network overops -e TAKIPI_COLLECTOR_HOST=<collector_hostname>  -e TAKIPI_COLLECTOR_PORT=6060 -e TAKIPI_APPLICATION_NAME=java-bullshifier -e TAKIPI_DEPLOYMENT_NAME=deployment1 -e TAKIPI_SERVER_NAME=DEV -e COLOR=<white/yellow/red/black> overops-java-bullshifier:latest
+```
+Note: This assumes you have a collector running in docker with `--network overops --name overops-collector`

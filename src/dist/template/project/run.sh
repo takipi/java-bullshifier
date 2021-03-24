@@ -7,6 +7,7 @@ source params.sh
 
 declare emulatorDataDir=emulator-data
 
+declare runInContainer="false"
 declare runningDays=0
 declare runningHours=1
 declare processesCount=5
@@ -23,9 +24,12 @@ declare appUuid="ffffffff-ffff-ffff-ffff-ffffffffffff"
 
 function parse_command_line()
 {
+	params_add "run-in-container" "ric" "$runInContainer" "runInContainer" "boolean" \
+			"Number of processes to run"
+
 	params_add "processes-count" "pc" "$processesCount" "processesCount" "expect_value" \
 			"Number of processes to run"
-			
+
 	params_add "process-heap-size" "hs" "$processHeapSize" "processHeapSize" "expect_value" \
 			"The heap size of every Java process (both min and max)"
 
@@ -93,14 +97,17 @@ function run_bullshifiers()
 	if [ -r "APP_UUID" ]; then
 		appUuid=$(cat APP_UUID)
 	fi
-	
+
+	if [ "$runInContainer" == "true" ]; then
+		processesCount=1
+	fi
+
 	let exceptionCount="$millisInHour/$intervalMillis"
 	let runningCount="($runningDays*24)+($runningHours%24)"
-	
+
 	for ((i=1;i<=$processesCount;i++)); do
 		local serverIndex=$(($i%$serversCount))
 		local serverName="${hostnamePrefix}$serverIndex"
-		
 		local appIndex=$(($i%$appsCount))
 		local appName="$appType-$appIndex"
 		
@@ -120,8 +127,12 @@ function run_bullshifiers()
 		local command="$JAVA_HOME/bin/java $jvmInternalParams -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
 		
 		if [ "$dryRun" == "false" ]; then
-			nohup $command &
-			sleep $sleepSeconds
+			if [ "$runInContainer" == "true" ]; then
+				$command
+			else
+				nohup $command &
+				sleep $sleepSeconds
+			fi
 		else
 			echo "nohup $command &"
 			echo "sleep $sleepSeconds"
