@@ -53,7 +53,7 @@ COPY --from=bulshifier-colors  --chown=1000:1000 /black ./black
 COPY --from=agent --chown=1000:1000 /takipi/ ./agent
 
 # Copy the start script to container
-COPY  --chown=1000:1000 /start.sh ./start.sh
+COPY  --chown=1000:1000 ./scripts/start.sh ./start.sh
 RUN chmod o+x ./start.sh
 
 # Install procps for ps command
