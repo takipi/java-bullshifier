@@ -83,7 +83,6 @@ function run_bullshifiers()
 {
 	parse_command_line $@
 	
-	echo "hey1"
 	local millisInHour=3600000
 	
 	if [ "$intervalMillis" -gt "$millisInHour" ]; then
@@ -99,21 +98,16 @@ function run_bullshifiers()
 		appUuid=$(cat APP_UUID)
 	fi
 
-	echo "hey2"
-
 	if [ "$runInContainer" == "true" ]; then
-		echo "hey3"
 		processesCount=1
 	fi
 
 	let exceptionCount="$millisInHour/$intervalMillis"
 	let runningCount="($runningDays*24)+($runningHours%24)"
-	echo "hey5"
 
 	for ((i=1;i<=$processesCount;i++)); do
 		local serverIndex=$(($i%$serversCount))
 		local serverName="${hostnamePrefix}$serverIndex"
-		echo "hey6"
 		local appIndex=$(($i%$appsCount))
 		local appName="$appType-$appIndex"
 		
@@ -131,16 +125,12 @@ function run_bullshifiers()
 		local appConfig="--single-thread --hide-stacktraces --warmup-millis 0 --frames-range 50"
 		local jvmInternalParams="-XX:CICompilerCount=2 -XX:ParallelGCThreads=1"
 		local command="$JAVA_HOME/bin/java $jvmInternalParams -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
-		echo "hey7"
 		
 		if [ "$dryRun" == "false" ]; then
-				echo "hey7.5"
 				echo "runInContainer: $runInContainer"
 			if [ "$runInContainer" == "true" ]; then
-				echo "hey8"
 				echo "RUNNING $command" 
 				$command
-				echo "hey9"
 			else
 				nohup $command &
 				sleep $sleepSeconds
