@@ -127,9 +127,7 @@ function run_bullshifiers()
 		local command="$JAVA_HOME/bin/java $jvmInternalParams -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
 		
 		if [ "$dryRun" == "false" ]; then
-				echo "runInContainer: $runInContainer"
 			if [ "$runInContainer" == "true" ]; then
-				echo "RUNNING $command" 
 				$command
 			else
 				nohup $command &
