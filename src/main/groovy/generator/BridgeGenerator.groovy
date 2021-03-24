@@ -4,40 +4,34 @@ public class BridgeGenerator {
 	public static generate(methodName, classes) {
 		def lines = []
 
+		def methodToCallVariableName = getMethodToCallVariableName(methodName)
 		def swtichMethods = randomMethods(classes, Config.bridgeSwitchSize)
-
+		
 		lines += ""
-		lines += addMethodToCallCalculation(methodName, swtichMethods.size())
+		lines += "try"
+		lines += "{"
+		lines += "	int $methodToCallVariableName = Config.get().getStickyPath(classId, methodId, ${swtichMethods.size()});"
 		lines += ""
 		lines += addSwitch(methodName, swtichMethods)
+		lines += "}"
+		lines += "catch (Exception e)"
+		lines += "{"
+		lines += "	if (Config.get().shouldWriteLogError(context))"
+		lines += "	{"
+		lines += "		String serverName = System.getProperty(\"takipi.server.name\");"
+		lines += "		String agentName = System.getProperty(\"takipi.name\");"
+		lines += "		String deploymentName = System.getProperty(\"takipi.deployment.name\");"
+		lines += "		logger.error(\"An error from ({}/{}/{})\", serverName, agentName, deploymentName, e);"
+		lines += "	}"
+		lines += "}"
 		lines += ""
 		lines += "if (Boolean.parseBoolean(\"true\")) { return; }"
-		lines += ""
 
 		return lines
 	}
 	
 	public static getMethodToCallVariableName(methodName) {
 		return "${methodName}MethodToCall"
-	}
-	
-	private static addMethodToCallCalculation(methodName, methodsCount)
-	{
-		def methodToCallVariableName = getMethodToCallVariableName(methodName)
-		
-		return [
-			"if (Config.get().isStickyPath())",
-			"{",
-			"	if ($methodToCallVariableName == -1)",
-			"	{",
-			"		$methodToCallVariableName = Config.get().getStickyPath(classId, methodId, $methodsCount);",
-			"	}",
-			"}",
-			"else",
-			"{",
-			"	$methodToCallVariableName = Config.get().getRandom().nextInt($methodsCount);",
-			"}"
-		]
 	}
 	
 	private static randomMethods(classes, bridgeSwitchSize) {
@@ -51,16 +45,16 @@ public class BridgeGenerator {
 		def methodToCallVariableName = getMethodToCallVariableName(methodName)
 		
 		def switcher = [
-			"switch ($methodToCallVariableName)",
-			"{"
+			"\tswitch ($methodToCallVariableName)",
+			"\t{"
 		]
 
 		int counter = 0
 
 		swtichMethods.each({
-			switcher += "\tcase (${counter++}): ${it.owner.qualifyName()}.${it.name}(context); return;"
+			switcher += "\t\tcase (${counter++}): ${it.owner.qualifyName()}.${it.name}(context); return;"
 		})
 		
-		switcher += "}"
+		switcher += "\t}"
 	}
 }

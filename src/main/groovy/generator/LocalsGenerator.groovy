@@ -7,7 +7,7 @@ public class LocalsGenerator
 
 	private static generateLocals()	{
 		def result = [];
-		result += generateLocalsInternal("root", 0);
+		result += generateLocalsInternal("root", 2);
 		return result;
 	}
 
@@ -93,7 +93,6 @@ public class LocalsGenerator
 		result += "{"
 		result += "${tabs}$arrName[i] = Config.get().getRandom().nextInt(1000);"
 		result += "}"
-		result += ""
 		result += ""
 		
 		return result;

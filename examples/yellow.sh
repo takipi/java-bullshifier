@@ -9,7 +9,6 @@ declare bullshifier_name="yellow"
     -Poutput-directory=$bullshifier_name \
     -Psubprojects=1 \
     -Pio-cpu-intensive-matrix-size=0 \
-    -Pconfig-class=SimpleConfig \
     -Pmethods-per-class=1 \
     -Plog-info-per-method=1 \
     -Plog-warn-per-method=0 \

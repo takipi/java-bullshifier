@@ -4,7 +4,6 @@ public class Config {
     public static rootDirectory
     public static generatedPackage = "generated"
     public static templateDirectory = "template"
-    public static configClassToUse = "SimpleConfig"
 
     public static classesCount = 10
     public static methodsPerClass = 5

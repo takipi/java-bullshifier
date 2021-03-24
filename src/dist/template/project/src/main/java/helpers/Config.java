@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-public abstract class Config
+public class Config
 {
 	public static Random rand = new Random();
 
@@ -26,17 +26,17 @@ public abstract class Config
 				return instance;
 			}
 
-			instance = new SimpleConfig();
+			instance = new Config();
 
 			return instance;
 		}
 	}
 	
-	public int framesRangeFrom = -1;
-	public int framesRangeTo = -1;
-	public boolean isStickyPath;
+	public int framesRangeFrom = 0;
+	public int framesRangeTo = 10;
 	public File stickyPathDir;
-	public String appAlias;
+	public File eventSpotDir;
+	public ThreadLocal<Integer> entryPointIndex = new ThreadLocal<>();
 	
 	public Config()
 	{
@@ -69,26 +69,6 @@ public abstract class Config
 		this.framesRangeTo = to;
 	}
 	
-	public boolean shouldThrowIllegal(Context context) {
-		if (framesRangeFrom < 0 || framesRangeTo < 0) {
-			return internalShouldThrowIllegal(context);
-		}
-		
-		if (context.victomFrame == null) {
-			context.victomFrame = framesRangeFrom + rand.nextInt((framesRangeTo - framesRangeFrom) + 1);
-		}
-		
-		return context.victomFrame <= context.counter;
-	}
-	
-	public void setStickyPath(boolean isStickyPath) {
-		this.isStickyPath = isStickyPath;
-	}
-	
-	public boolean isStickyPath() {
-		return isStickyPath;
-	}
-	
 	public void setStickyPathsDir(String stickyPathDirPath) {
 		if (stickyPathDirPath == null) {
 			System.out.println("Invalid stickyPathDirPath, null");
@@ -110,30 +90,18 @@ public abstract class Config
 		return stickyPathDir;
 	}
 	
-	public String getAppAlias() {
-		return appAlias;
-	}
-	
-	public void setAppAlias(String appAlias) {
-		this.appAlias = appAlias;
-	}
-	
 	public int getStickyPath(int classId, int methodId, int maxNumber) {
 		if (stickyPathDir == null) {
 			return rand.nextInt(maxNumber);
 		}
 		
-		if (appAlias == null) {
-			return rand.nextInt(maxNumber);
-		}
-		
-		int result = StickyPathHelper.getMethodToCall(stickyPathDir, appAlias, classId, methodId);
+		int result = StickyPathHelper.getMethodToCall(stickyPathDir, classId, methodId);
 		
 		if (result == -1) {
 			int randomNumber = rand.nextInt(maxNumber);
 			
 			if (!StickyPathHelper.persistMethodToCall(
-				stickyPathDir, appAlias, classId, methodId, randomNumber)) {
+				stickyPathDir, classId, methodId, randomNumber)) {
 				System.out.println("Error persisiting sticky path");
 			}
 			
@@ -142,16 +110,66 @@ public abstract class Config
 		
 		return result;
 	}
+	
+	public void setEventSpotDir(String eventSpotDirPath) {
+		if (eventSpotDirPath == null) {
+			System.out.println("Invalid eventSpotDirPath, null");
+			return;
+		}
+		
+		File eventSpotDir = new File(eventSpotDirPath);
+		eventSpotDir.mkdirs();
+		
+		if (!eventSpotDir.isDirectory()) {
+			System.out.println("Provided event spot dir is not directory: " + eventSpotDir);
+			return;
+		}
+		
+		this.eventSpotDir = eventSpotDir;
+	}
+	
+	public File getEventSpotDir() {
+		return eventSpotDir;
+	}
+	
+	public boolean shouldFireEvent(Context context) {
+		if (eventSpotDir == null) {
+			return context.framesDepth > framesRangeTo;
+		}
+		
+		return EventsSpot.shouldFireEvent(eventSpotDir, context);
+	}
+	
+	public boolean shouldRunAway(Context context) {
+		return context.framesDepth > framesRangeTo;
+	}
+	
+	public void updateContext(Context context, int entryPointId, int classId, int methodId) {
+		context.framesDepth++;
+		context.entryPointId = entryPointId;
+		context.classId = classId;
+		context.methodId = methodId;
+		context.addPath(classId, methodId);
+		Context.incInvCount(context);
+	}
+	
+	public boolean shouldWriteLogInfo(Context context) {
+		return true;
+	}
 
-	public abstract boolean shouldThrow1000();
-	public abstract boolean internalShouldThrowIllegal(Context context);
-	public abstract boolean shouldThrowIO(Context context);
-	public abstract boolean shouldWriteLogInfo(Context context);
-	public abstract boolean shouldWriteLogWarn(Context context);
-	public abstract boolean shouldWriteLogError(Context context);
-	public abstract boolean shouldSuicide();
-	public abstract boolean shouldRunAway(Context context);
-	public abstract boolean shouldThrowSomething(int methodId, int classId);
-	public abstract boolean shouldDoIoCpuIntensiveLogic(Context context);
-	public abstract void updateContext(Context context, int classId, int methodId);
+	public boolean shouldWriteLogWarn(Context context) {
+		return false;
+	}
+
+	public boolean shouldWriteLogError(Context context) {
+		return true;
+	}
+
+	public boolean shouldSuicide() {
+		return false;
+	}
+	
+	public boolean shouldDoIoCpuIntensiveLogic(Context context) {
+		return false;
+	}
 }

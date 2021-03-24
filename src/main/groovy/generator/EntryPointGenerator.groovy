@@ -71,11 +71,21 @@ public class EntryPointGenerator {
 		import helpers.Config;
 		import helpers.Context;
 		import java.util.concurrent.Callable;
-
+		import org.slf4j.MDC;
+		
 		public class EntrypointCallable${i} implements Callable<Object> {
-			public Object call() throws Exception {				
+			public Object call() throws Exception {
+				String serverName = System.getProperty("takipi.server.name");
+				String agentName = System.getProperty("takipi.name");
+				String deploymentName = System.getProperty("takipi.deployment.name");
+				
+				MDC.put("server", serverName);
+				MDC.put("agent", agentName);
+				MDC.put("deployment", deploymentName);
+				
 				long startTime = System.currentTimeMillis();
 				try {
+					Config.get().entryPointIndex.set($i);
 					${addCallToSwitcher(i, switcherClassName)}
 				}
 				finally {
