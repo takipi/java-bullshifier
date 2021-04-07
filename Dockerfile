@@ -63,6 +63,8 @@ RUN apt-get update && apt-get install -y procps
 USER 1000:1000 
 
 # set default environmental variables
+ENV RUNNING_DURATION_HOURS=0
+ENV RUNNING_DURATION_MINUTE=1
 ENV COLOR=white
 ENV TAKIPI_COLLECTOR_HOST=collector
 ENV TAKIPI_COLLECTOR_PORT=6060
