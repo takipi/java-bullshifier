@@ -25,7 +25,7 @@ declare appUuid="ffffffff-ffff-ffff-ffff-ffffffffffff"
 function parse_command_line()
 {
 	params_add "run-in-container" "ric" "$runInContainer" "runInContainer" "boolean" \
-			"Number of processes to run"
+			"Do not use nohup, and run 1 process always"
 
 	params_add "processes-count" "pc" "$processesCount" "processesCount" "expect_value" \
 			"Number of processes to run"
