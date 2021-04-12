@@ -54,7 +54,7 @@ COPY --from=agent --chown=1000:1000 /takipi/ ./agent
 
 # Copy the start script to container
 COPY  --chown=1000:1000 ./scripts/start.sh ./start.sh
-RUN chmod o+x ./start.sh
+RUN chmod u+x ./start.sh
 
 # Install procps for ps command
 RUN apt-get update && apt-get install -y procps
@@ -63,6 +63,8 @@ RUN apt-get update && apt-get install -y procps
 USER 1000:1000 
 
 # set default environmental variables
+ENV RUNNING_DURATION_HOURS=0
+ENV RUNNING_DURATION_MINUTES=1
 ENV COLOR=white
 ENV TAKIPI_COLLECTOR_HOST=collector
 ENV TAKIPI_COLLECTOR_PORT=6060

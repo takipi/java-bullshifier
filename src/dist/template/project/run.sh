@@ -8,8 +8,8 @@ source params.sh
 declare emulatorDataDir=emulator-data
 
 declare runInContainer="false"
-declare runningDays=0
-declare runningHours=1
+declare runningHours=0
+declare runningMinutes=1
 declare processesCount=5
 declare hostnamePrefix="hostname-"
 declare serversCount=5
@@ -25,7 +25,7 @@ declare appUuid="ffffffff-ffff-ffff-ffff-ffffffffffff"
 function parse_command_line()
 {
 	params_add "run-in-container" "ric" "$runInContainer" "runInContainer" "boolean" \
-			"Number of processes to run"
+			"Do not use nohup, and run 1 process always"
 
 	params_add "processes-count" "pc" "$processesCount" "processesCount" "expect_value" \
 			"Number of processes to run"
@@ -45,11 +45,11 @@ function parse_command_line()
 	params_add "hostname-prefix" "host" "$hostnamePrefix" "hostnamePrefix" "expect_value" \
 			"A prefix to append to all server names"
 
-	params_add "running-days" "days" "$runningDays" "runningDays" "expect_value" \
-			"The number of days this app should be running"
-
-	params_add "running-hour" "hours" "$runningHours" "runningHours" "expect_value" \
+	params_add "running-hours" "hours" "$runningHours" "runningHours" "expect_value" \
 			"The number of hours this app should be running"
+
+	params_add "running-minutes" "min" "$runningMinutes" "runningMinutes" "expect_value" \
+			"The number of minutes this app should be running"
 
 	params_add "jvm-args" "jvm" "$extraJVMArgs" "extraJVMArgs" "expect_value" \
 			"JVM arguments to be passed to the application"
@@ -83,13 +83,8 @@ function run_bullshifiers()
 {
 	parse_command_line $@
 	
-	local millisInHour=3600000
-	
-	if [ "$intervalMillis" -gt "$millisInHour" ]; then
-		echo "Interval millis max reached: $$intervalMillis (max: $millisInHour)"
-		return 1
-	fi
-	
+	local millisInMinute=60000
+		
 	if [ -r "APP_TYPE" ]; then
 		appType=$(cat APP_TYPE)
 	fi
@@ -102,8 +97,14 @@ function run_bullshifiers()
 		processesCount=1
 	fi
 
-	let exceptionCount="$millisInHour/$intervalMillis"
-	let runningCount="($runningDays*24)+($runningHours%24)"
+	if [[ "$intervalMillis" -lt "$millisInMinute" ]]; then
+		let exceptionCount="$millisInMinute/$intervalMillis"
+		let runningCount="($runningHours*60)+($runningMinutes%60)"
+	else
+		let exceptionCount="1"
+		let MinutesCount="$intervalMillis/$millisInMinute"
+		let runningCount="(($runningHours*60)+($runningMinutes%60))/$MinutesCount"
+	fi
 
 	for ((i=1;i<=$processesCount;i++)); do
 		local serverIndex=$(($i%$serversCount))
