@@ -106,6 +106,11 @@ function run_bullshifiers()
 		let runningCount="(($runningHours*60)+($runningMinutes%60))/$MinutesCount"
 	fi
 
+	if [ "$runningMinutes" == "0" -a "$runningHours" == "0" ];then
+		runningCount=1
+		exceptionCount=0
+	fi
+
 	for ((i=1;i<=$processesCount;i++)); do
 		local serverIndex=$(($i%$serversCount))
 		local serverName="${hostnamePrefix}$serverIndex"
