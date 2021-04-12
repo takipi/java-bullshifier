@@ -106,6 +106,11 @@ function run_bullshifiers()
 		let runningCount="(($runningHours*60)+($runningMinutes%60))/$MinutesCount"
 	fi
 
+	if [[ "$runningMinutes" == 0 -a "$runningHours" == 0 ]];then
+		runningCount=1
+		exceptionCount=0
+	fi
+
 	for ((i=1;i<=$processesCount;i++)); do
 		local serverIndex=$(($i%$serversCount))
 		local serverName="${hostnamePrefix}$serverIndex"
@@ -127,17 +132,18 @@ function run_bullshifiers()
 		local jvmInternalParams="-XX:CICompilerCount=2 -XX:ParallelGCThreads=1"
 		local command="$JAVA_HOME/bin/java $jvmInternalParams -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
 		
-		if [ "$dryRun" == "false" ]; then
-			if [ "$runInContainer" == "true" ]; then
-				$command
-			else
-				nohup $command &
-				sleep $sleepSeconds
-			fi
-		else
-			echo "nohup $command &"
-			echo "sleep $sleepSeconds"
-		fi
+		echo "durationPlan: $durationPlan"
+		# if [ "$dryRun" == "false" ]; then
+		# 	if [ "$runInContainer" == "true" ]; then
+		# 		$command
+		# 	else
+		# 		nohup $command &
+		# 		sleep $sleepSeconds
+		# 	fi
+		# else
+		# 	echo "nohup $command &"
+		# 	echo "sleep $sleepSeconds"
+		# fi
 	done
 }
 
