@@ -2,7 +2,7 @@ javaBullshifierVersion = ''
 agentVersion = ''
 fullTag = ''
 tagCheck = ''
-javaBullshifierTags = ["test"]
+javaBullshifierTags = ["latest"]
 dockerOptions= '--network=host'
 imageName='overops/event-generator'
 
