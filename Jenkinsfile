@@ -2,9 +2,10 @@ javaBullshifierVersion = ''
 agentVersion = ''
 fullTag = ''
 tagCheck = ''
-javaBullshifierTags = []
+javaBullshifierTags = ["test"]
 dockerOptions= '--network=host'
-imageName='overops/event-generator'
+// imageName='overops/event-generator'
+imageName='hodik1012/java-bullshifier'
 
 pipeline {
 
