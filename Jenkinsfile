@@ -4,7 +4,8 @@ fullTag = ''
 tagCheck = ''
 javaBullshifierTags = ["latest"]
 dockerOptions= '--network=host'
-imageName='overops/event-generator'
+// imageName='overops/event-generator'
+imageName='hodik1012/java-bullshifier'
 
 pipeline {
 
