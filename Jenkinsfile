@@ -4,7 +4,7 @@ fullTag = ''
 tagCheck = ''
 javaBullshifierTags = ["test"]
 dockerOptions= '--network=host'
-// imageName='overops/event-generator'
+// imageName='overops/java-bullshifier'
 imageName='hodik1012/java-bullshifier'
 
 pipeline {
@@ -26,40 +26,40 @@ pipeline {
             }
         }
 
-        // stage('Determine versions and tags') {
-        //     steps {
-        //         {
-        //             // Determine the Event Generator Version (Reads local pom file)
-        //             javaBullshifierVersion = sh(returnStdout: true, script: 'python3 ./scripts/version-support.py --get-version').trim()
+        stage('Determine versions and tags') {
+            steps {
+                script{
+                    // Determine the Java Bullshifier Version
+                    javaBullshifierVersion = sh(returnStdout: true, script: 'python3 ./scripts/version-support.py --get-version').trim()
 
-        //             // Determine the latest agent version and add latest tags. otherwise only use the agent parameter.
-        //             // Note: When setting the Agent Version as param only the full tag is pushed.
-        //             if ( params.AGENT_VERSION == 'latest' ) {
-        //                 agentVersion = sh(returnStdout: true, script: 'python3 ./scripts/version-support.py --get-agent-version').trim()
-        //                 javaBullshifierTags.add('latest')
-        //                 javaBullshifierTags.add(javaBullshifierVersion)
-        //             } else {
-        //                 agentVersion = params.AGENT_VERSION
-        //             }
+                    // Determine the latest agent version and add latest tags. otherwise only use the agent parameter.
+                    // Note: When setting the Agent Version as param only the full tag is pushed.
+                    if ( params.AGENT_VERSION == 'latest' ) {
+                        agentVersion = sh(returnStdout: true, script: 'python3 ./scripts/version-support.py --get-agent-version').trim()
+                        javaBullshifierTags.add('latest')
+                        javaBullshifierTags.add(javaBullshifierVersion)
+                    } else {
+                        agentVersion = params.AGENT_VERSION
+                    }
 
-        //             // Add full unique tag i.e. 2.13-agent-4.54.0
-        //             fullTag = (javaBullshifierVersion + '-agent-' + agentVersion)
-        //             javaBullshifierTags.add(fullTag)
+                    // Add full unique tag i.e. 2.13-agent-4.54.0
+                    fullTag = (javaBullshifierVersion + '-agent-' + agentVersion)
+                    javaBullshifierTags.add(fullTag)
 
-        //             // Determine if the tag doesn't exists if not we should build and publish.
-        //             tagCheck = sh(returnStdout: true, script:"python3 ./scripts/version-support.py --check-docker-tag --repository event-generator --tag ${fullTag}").trim()
-        //         }
-        //     }
-        // }
+                    // Determine if the tag doesn't exists if not we should build and publish.
+                    tagCheck = sh(returnStdout: true, script:"python3 ./scripts/version-support.py --check-docker-tag --repository event-generator --tag ${fullTag}").trim()
+                }
+            }
+        }
 
         stage('Build') {
-            // when {
-            //     anyOf {
-            //         // Run Build if forced or if the tag does not exists.
-            //         expression { return params.FORCE_PUBLISH }
-            //         expression { tagCheck == 'false' }
-            //     }
-            // }
+            when {
+                anyOf {
+                    // Run Build if forced or if the tag does not exists.
+                    expression { return params.FORCE_PUBLISH }
+                    expression { tagCheck == 'false' }
+                }
+            }
 
             steps {
                 script {
@@ -78,13 +78,13 @@ pipeline {
         }
 
         stage('Publish Image') {
-            // when {
-            //     anyOf {
-            //         // Run Build if forced or if the tag does not exists.
-            //         expression { return params.FORCE_PUBLISH }
-            //         expression { tagCheck == 'false' }
-            //     }
-            // }
+            when {
+                anyOf {
+                    // Run Build if forced or if the tag does not exists.
+                    expression { return params.FORCE_PUBLISH }
+                    expression { tagCheck == 'false' }
+                }
+            }
 
             steps {
                 script {
