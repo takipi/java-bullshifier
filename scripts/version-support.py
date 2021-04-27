@@ -35,7 +35,7 @@ class VersionSupportCLI():
 
         try:
             if args.get_version:
-                result = self.get_version_from_pom()
+                result = self.get_version()
                 pass
             elif args.get_agent_version:
                 result = self.get_latest_hosted_agent_version()
@@ -57,8 +57,8 @@ class VersionSupportCLI():
     '''
     Pulls the version from the POM.
     '''
-    def get_version_from_pom(self):
-        return "2.0.0".text
+    def get_version(self):
+        return "2.0.0"
     '''
     Pulls the latest agent version from public hosted site.
     '''
