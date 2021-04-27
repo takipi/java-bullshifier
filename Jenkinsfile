@@ -2,20 +2,21 @@ javaBullshifierVersion = ''
 agentVersion = ''
 fullTag = ''
 tagCheck = ''
-javaBullshifierTags = ["test"]
+javaBullshifierTags = []
 dockerOptions= '--network=host'
-// imageName='overops/java-bullshifier'
-imageName='hodik1012/java-bullshifier'
+imageName = 'overops-java-bullshifier'
+
 
 pipeline {
 
     parameters {
         booleanParam(name: 'FORCE_PUBLISH', defaultValue: false, description: 'Forces a build and publish')
         string(name: 'AGENT_VERSION', defaultValue: 'latest', description:'Build and publish a specific agent version. Note: Only Full version tag is published if not latest.')
+        booleanParam(name: 'PUBLISH_TO_AWS', defaultValue: true, description: 'Publish to AWS Registry')
     }
 
     environment {
-        registryCred = 'hod-docker-hub'
+            awsRegCred = 'ecr:us-east-1:aws-takipi-dev-service'
     }
 
     agent any
@@ -46,20 +47,18 @@ pipeline {
                     fullTag = (javaBullshifierVersion + '-agent-' + agentVersion)
                     javaBullshifierTags.add(fullTag)
 
-                    // Determine if the tag doesn't exists if not we should build and publish.
-                    tagCheck = sh(returnStdout: true, script:"python3 ./scripts/version-support.py --check-docker-tag --repository event-generator --tag ${fullTag}").trim()
                 }
             }
         }
 
         stage('Build') {
-            when {
-                anyOf {
-                    // Run Build if forced or if the tag does not exists.
-                    expression { return params.FORCE_PUBLISH }
-                    expression { tagCheck == 'false' }
-                }
-            }
+            // when {
+            //     anyOf {
+            //         // Run Build if forced or if the tag does not exists.
+            //         expression { return params.FORCE_PUBLISH }
+            //         expression { tagCheck == 'false' }
+            //     }
+            // }
 
             steps {
                 script {
@@ -78,20 +77,22 @@ pipeline {
         }
 
         stage('Publish Image') {
-            when {
-                anyOf {
-                    // Run Build if forced or if the tag does not exists.
-                    expression { return params.FORCE_PUBLISH }
-                    expression { tagCheck == 'false' }
-                }
-            }
-
+            // when {
+            //     anyOf {
+            //         // Run Build if forced or if the tag does not exists.
+            //         expression { return params.FORCE_PUBLISH }
+            //         expression { tagCheck == 'false' }
+            //     }
+            // }
+            
+            // Publish image to private ECR
             steps {
                 script {
-                    // Publish to Docker Hub
-                    docker.withRegistry('', registryCred ) {
-                        for(String tag in javaBullshifierTags) {
-                            dockerImage.push(tag)
+                    if (params.PUBLISH_TO_AWS) {
+                        docker.withRegistry(env.AWS_TAKIPI_DEV_REGISTRY_URI, awsRegCred ) {
+                            for(String tag in javaBullshifierTags) {
+                                dockerImage.push(tag)
+                            }
                         }
                     }
                 }

@@ -19,13 +19,12 @@ class VersionSupportCLI():
         # Additional Options:
         self.parser.add_argument('--tag', help='Docker Tag to Check for if exists')
         self.parser.add_argument('--registry', default='dockerhub')
-        self.parser.add_argument('--repository', default='overops-event-generator')
+        self.parser.add_argument('--repository', default='overops-java-bullshifier')
         self.parser.add_argument('--username')
         self.parser.add_argument('--token')
 
 
         rootdir, _ = os.path.split(os.path.dirname(os.path.realpath(__file__)))
-        self.pom_path = os.path.join(rootdir, 'pom.xml')        
         pass
 
     def run(self):
