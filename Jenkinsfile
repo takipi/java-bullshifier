@@ -1,36 +1,42 @@
-javaBullshifierVersion = ''
-agentVersion = ''
-fullTag = ''
-tagCheck = ''
-javaBullshifierTags = []
-dockerOptions= '--network=host'
-imageName = 'overops-java-bullshifier'
-
+def javaBullshifierVersion = ''
+def agentVersion = ''
+def fullTag = ''
+def tagCheck = ''
+def javaBullshifierTags = []
+def dockerOptions= '--network=host'
+def imageName = 'overops-java-bullshifier'
+def localRepoPath = ('docker/' + imageName)
 
 pipeline {
 
     parameters {
         booleanParam(name: 'FORCE_PUBLISH', defaultValue: false, description: 'Forces a build and publish')
-        string(name: 'AGENT_VERSION', defaultValue: 'latest', description:'Build and publish a specific agent version. Note: Only Full version tag is published if not latest.')
+        string(name: 'VERSION', defaultValue: 'latest', description:'Build and publish a specific agent version. Note: Only Full version tag is published if not latest.')
         booleanParam(name: 'PUBLISH_TO_AWS', defaultValue: true, description: 'Publish to AWS Registry')
     }
 
     environment {
-            awsRegCred = 'ecr:us-east-1:aws-takipi-dev-service'
+        awsRegCred = 'ecr:us-east-1:aws-takipi-dev-service'
+        registryCred = 'container-registry-build-guy'
+        gitCred = 'build-guy'
     }
 
     agent any
     stages {
         stage('Cloning Git') {
             steps {
-                git([url: 'https://github.com/takipi/java-bullshifier', branch: 'feature/OO-11642/deploy-java-bullshifier-with-jenkins'])
+                git([url: 'https://github.com/takipi/java-bullshifier.git', branch: 'feature/OO-11642/deploy-java-bullshifier-with-jenkins', credentialsId: gitCred ])
             }
         }
 
-        stage('Determine versions and tags') {
-            steps {
+     stage('Determine versions and tags') {
+          environment {
+                LOCAL_REGISTRY_CREDS = credentials("${registryCred}")
+            }
+
+            steps { 
                 script{
-                    // Determine the Java Bullshifier Version
+                    // Determine the Java Bullshifier Version (Reads local VERSION file)
                     javaBullshifierVersion = sh(returnStdout: true, script: 'python3 ./scripts/version-support.py --get-version').trim()
 
                     // Determine the latest agent version and add latest tags. otherwise only use the agent parameter.
@@ -47,18 +53,21 @@ pipeline {
                     fullTag = (javaBullshifierVersion + '-agent-' + agentVersion)
                     javaBullshifierTags.add(fullTag)
 
+                    // Determine if the tag doesn't exists if not we should build and publish.
+                    registryAPIEndpoint = (env.LOCAL_DOCKER_REGISTRY_URL + '/artifactory/api/docker/docker')
+                    tagCheck = sh(returnStdout: true, script:"python3 ./scripts/version-support.py --check-docker-tag --tag ${fullTag} --repository ${imageName} --registry ${registryAPIEndpoint} --username \$LOCAL_REGISTRY_CREDS_USR --token \$LOCAL_REGISTRY_CREDS_PSW").trim()
                 }
             }
         }
 
         stage('Build') {
-            // when {
-            //     anyOf {
-            //         // Run Build if forced or if the tag does not exists.
-            //         expression { return params.FORCE_PUBLISH }
-            //         expression { tagCheck == 'false' }
-            //     }
-            // }
+            when {
+                anyOf {
+                    // Run Build if forced or if the tag does not exists.
+                    expression { return params.FORCE_PUBLISH }
+                    expression { tagCheck == 'false' }
+                }
+            }
 
             steps {
                 script {
@@ -68,30 +77,40 @@ pipeline {
                     if ( params.AGENT_VERSION == 'latest' ) {
                         options = (dockerOptions + ' .')
                     } else {
-                        options = ( dockerOptions + ' --build-arg AGENT_VERSION=' + params.AGENT_VERSION + ' .')
+                        options = ( dockerOptions + ' --build-arg VERSION=' + params.AGENT_VERSION + ' .')
                     }
 
-                    dockerImage = docker.build( imageName, options )
+                    // Note: "building" two images in order to have correct image name for each registry
+                    //       Second call is no-op but is done this way based on the docker plugin api limitations.
+                    dockerImage = docker.build( localRepoPath, options )
+                    awsDockerImage = docker.build( imageName, options )
                 }
             }
         }
 
         stage('Publish Image') {
-            // when {
-            //     anyOf {
-            //         // Run Build if forced or if the tag does not exists.
-            //         expression { return params.FORCE_PUBLISH }
-            //         expression { tagCheck == 'false' }
-            //     }
-            // }
-            
-            // Publish image to private ECR
+            when {
+                anyOf {
+                    // Run Build if forced or if the tag does not exists.
+                    expression { return params.FORCE_PUBLISH }
+                    expression { tagCheck == 'false' }
+                }
+            }
+
             steps {
                 script {
+                    docker.withRegistry(env.LOCAL_DOCKER_REGISTRY_URL, registryCred ) {
+                            for(String tag in javaBullshifierTags) {
+                                 echo(tag)
+                                dockerImage.push(tag)
+                            }
+                    }
+
+                    // Publish image to private ECR
                     if (params.PUBLISH_TO_AWS) {
                         docker.withRegistry(env.AWS_TAKIPI_DEV_REGISTRY_URI, awsRegCred ) {
                             for(String tag in javaBullshifierTags) {
-                                dockerImage.push(tag)
+                                awsDockerImage.push(tag)
                             }
                         }
                     }

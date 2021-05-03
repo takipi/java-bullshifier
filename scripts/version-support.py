@@ -54,10 +54,10 @@ class VersionSupportCLI():
         pass
 
     '''
-    Pulls the version from the POM.
+    Pulls the version from the VERSION.
     '''
     def get_version(self):
-        return "2.0.0"
+        return open('VERSION',mode='r').read().strip()
     '''
     Pulls the latest agent version from public hosted site.
     '''
