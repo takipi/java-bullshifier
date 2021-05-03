@@ -25,7 +25,7 @@ pipeline {
     stages {
         stage('Cloning Git') {
             steps {
-                git([url: 'https://github.com/takipi/java-bullshifier.git', branch: 'feature/OO-11642/deploy-java-bullshifier-with-jenkins', credentialsId: gitCred ])
+                git([url: 'https://github.com/takipi/java-bullshifier.git', branch: 'master', credentialsId: gitCred ])
             }
         }
 
