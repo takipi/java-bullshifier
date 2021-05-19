@@ -63,6 +63,7 @@ RUN apt-get update && apt-get install -y procps
 USER 1000:1000 
 
 # set default environmental variables
+ENV INERVAL_MILLIS=300
 ENV RUNNING_DURATION_HOURS=0
 ENV RUNNING_DURATION_MINUTES=0
 ENV COLOR=white

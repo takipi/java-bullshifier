@@ -7,7 +7,11 @@ if [[ -n "${RUNNING_DURATION_HOURS}" ]]; then
 fi
 
 if [[ -n "${RUNNING_DURATION_MINUTES}" ]]; then 
-        command+="--running-minutes $RUNNING_DURATION_MINUTES"
+        command+="--running-minutes $RUNNING_DURATION_MINUTES "
+fi
+
+if [[ -n "${INERVAL_MILLIS}" ]]; then 
+        command+="--interval-millis $INERVAL_MILLIS "
 fi
 
 echo "About to run:"
