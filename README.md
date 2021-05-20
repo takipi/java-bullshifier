@@ -66,3 +66,14 @@ docker network create --driver bridge overops
 docker run -d --rm --network overops -e TAKIPI_COLLECTOR_HOST=<collector_hostname>  -e TAKIPI_COLLECTOR_PORT=6060 -e TAKIPI_APPLICATION_NAME=java-bullshifier -e TAKIPI_DEPLOYMENT_NAME=deployment1 -e TAKIPI_SERVER_NAME=DEV -e COLOR=<white/yellow/red/black> overops-java-bullshifier:latest
 ```
 Note: This assumes you have a collector running in docker with `--network overops --name overops-collector`
+
+The following table lists the configurable ENVS of the Java Bullshifier using `-e`:
+
+| Parameter                                    | Description                                                                                  | Default                           |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------|
+| `TAKIPI_COLLECTOR_HOST`                      | Collector hostname or K8s Service Name                                                       | `collector`                             |
+| `TAKIPI_COLLECTOR_PORT`                      | Collector port                                                                               | `6060`                            |
+| `COLOR`                              | The plan of the Bulshifier - affect on how intense will be the load on the application - (Options: white/yellow/red/black) .     | `white`                              |
+| `RUNNING_DURATION_HOURS`           | The number of hours java-bullshifier app should be running                                   | `0`                               |
+| `RUNNING_DURATION_MINUTES`         | The number of minutes java-bullshifier app should be running                                 | `5`                               |
+| `INERVAL_MILLIS`         |  Interval between events (millis)                                 | `300`                               |
