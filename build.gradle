@@ -21,7 +21,8 @@ run {
 	def availableCommandLineArguments = [
 		"name",
 		"output-directory", 
-		"classes", 
+		"classes",
+		"seed",
 		"subprojects", 
 		"config-class", 
 		"help", 

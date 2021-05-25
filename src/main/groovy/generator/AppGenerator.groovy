@@ -59,6 +59,10 @@ public class AppGenerator {
 			Config.entryPointNum = Integer.parseInt(commandLine."entry-points")
 		}
 		
+		if (commandLine."seed") {
+			Config.seed = Integer.parseInt(commandLine."seed")
+		}
+		
 		if (commandLine."template-directory") {
 			Config.templateDirectory = commandLine."template-directory"
 		}
@@ -152,7 +156,13 @@ public class AppGenerator {
 		}
 		
 		Utils.ant.chmod(file:"$projectDir/gradlew", perm:"+x")
-
+		
+		if(Config.seed != null){
+			println "\tCreating application with seed: $Config.seed"
+		}else{
+			println "\tCreating random application"
+		}
+		
 		println "\tGenerating $Config.classesCount classes"
 
 		def classes = generateClasses()
@@ -241,7 +251,13 @@ public class AppGenerator {
 			args:1,
 			argName:"str",
 			"The name of the output jar")
-
+		
+		commandLineOptions._(
+				longOpt:"seed",
+				args:1,
+				argName:"number",
+				"The seed used to generate the application (If not set a random application is generated every time)")
+		
 		commandLineOptions._(
 			longOpt:"classes",
 			args:1,

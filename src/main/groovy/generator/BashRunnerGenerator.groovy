@@ -10,5 +10,12 @@ public class BashRunnerGenerator {
 		
 		Utils.ant.chmod(file:"$outputDirectory/run.sh", perm:"+x")
 		Utils.ant.chmod(file:"$outputDirectory/increment-deployment.sh", perm:"+x")
+
+		// Informational file; just to know what seed was used if you want to share the application
+		if(Config.seed != null){
+			def seedFile = new File("$outputDirectory/SEED")
+			seedFile.write("Seed: "+Config.seed)
+		}
+
 	}
 }

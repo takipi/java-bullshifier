@@ -2,7 +2,7 @@ package generator;
 
 public class Utils {
 	private static ant = new AntBuilder()
-	private static rand = new Random()
+	private static rand = (Config.seed == null ? new Random() : new Random(Config.seed));
 	private static predefinedNames
 	
 	private static loadNamesFromFile() {
