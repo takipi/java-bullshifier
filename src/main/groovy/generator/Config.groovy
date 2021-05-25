@@ -29,5 +29,7 @@ public class Config {
     
     public static ioCpuIntensiveMatrixSize = 300
     public static ioCpuIntensiveFileLimit = 100
-    public static shouldGenerateLogicCode = true 
+    public static shouldGenerateLogicCode = true
+    
+    public static seed = null;
 }
