@@ -16,6 +16,7 @@ declare bullshifier_name="red"
     -Pbridge-switch-size=3 \
     -Pswitcher-max-routes=200 \
     -Pentry-points=20 \
-    -Pclasses=500 || exit 1
+    -Pclasses=500 \
+     $seedParameter || exit 1
 
 finish_bullshifier $bullshifier_name

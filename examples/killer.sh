@@ -16,6 +16,7 @@ declare bullshifier_name="killer"
     -Pbridge-switch-size=10 \
     -Pswitcher-max-routes=2000 \
     -Pentry-points=400 \
-    -Pclasses=10000 || exit 1
+    -Pclasses=10000 \
+     $seedParameter || exit 1
 
 finish_bullshifier $bullshifier_name
