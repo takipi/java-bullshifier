@@ -2,6 +2,7 @@ package helpers;
 
 import generated.*;
 import java.util.List;
+import java.util.Random;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,6 +86,10 @@ public class Main
 			Config.get().setEventSpotDir(cmd.getOptionValue("events-spot"));
 		}
 		
+		if (cmd.hasOption("seed")) {
+			Config.rand = new Random(parseLong(cmd.getOptionValue("seed"), 0));
+		}
+
 		boolean hideStackTraces = false;
 		
 		if (cmd.hasOption("hide-stacktraces")) {
@@ -302,6 +307,7 @@ public class Main
 		options.addOption("fc", "frames-range", true, "Choose a random number between a range in '(X..)?Y' format. (default is 1..1)");
 		options.addOption("sp", "sticky-path", true, "A path to store constant paths in the code");
 		options.addOption("es", "events-spot", true, "A path to store events spot");
+		options.addOption("s", "seed", true, "Application 'Random' seed number");
 		
 		return options;
 	}
