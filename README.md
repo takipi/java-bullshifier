@@ -77,3 +77,5 @@ The following table lists the configurable ENVS of the Java Bullshifier using `-
 | `RUNNING_DURATION_HOURS`           | The number of hours java-bullshifier app should be running                                   | `0`                               |
 | `RUNNING_DURATION_MINUTES`         | The number of minutes java-bullshifier app should be running                                 | `5`                               |
 | `INERVAL_MILLIS`         |  Interval between events (millis)                                 | `300`                               |
+| `GEN_SEED`         |  (Optional) Numerical value used to seed random functions when generating Java Application  |                                |
+| `APP_SEED`         |  (Optional) Numerical value used to seed random functions when running the generated application  |                                |
