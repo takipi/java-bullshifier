@@ -27,8 +27,14 @@ COPY --chown=1000:1000 ./build.gradle ./build.gradle
 COPY --chown=1000:1000 ./examples/*.sh ./examples/
 COPY --chown=1000:1000 ./scripts/*.sh ./
 
+# Precompile Colors
+RUN ["/bin/bash", "./examples/white.sh"]
+RUN ["/bin/bash", "./examples/yellow.sh"]
+RUN ["/bin/bash", "./examples/red.sh"]
+RUN ["/bin/bash", "./examples/black.sh"]
+
 # Change Permissions (Windows Build Support)
-RUN chmod u+x start.sh
+RUN chmod u+x *.sh
 RUN chmod u+x examples/*.sh
 
 # Default Environmental Variables
