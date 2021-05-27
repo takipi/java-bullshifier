@@ -1,6 +1,11 @@
 
 declare current_dir=`pwd`
 
+seedParameter=""
+if [[ -n "${GEN_SEED}" ]]; then
+        seedParameter+="-Pseed=$GEN_SEED "
+fi
+
 function finish_bullshifier() {
 	local bullshifier_name=$1
 	
