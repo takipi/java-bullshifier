@@ -28,7 +28,7 @@ import java.util.Random;
 
 public class LoaderMultiSwitcher
 {
-	private static final Random rand = new Random();
+	private static final Random rand = Config.get.getRandom();
 	
 	public static void call() throws Exception
 	{

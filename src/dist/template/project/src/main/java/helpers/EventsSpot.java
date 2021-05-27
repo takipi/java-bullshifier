@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.BufferedReader;
 
 public class EventsSpot {
-	public static Random rand = new Random();
+	public static Random rand = Config.get().getRandom();
 	
 	public static boolean shouldFireEvent(File spotDataDir, Context context) {
 		int currentLuck = Math.abs(rand.nextInt() % 100);

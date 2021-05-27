@@ -18,7 +18,7 @@ import java.util.Random;
 public class LoaderSwitcher@PROJECT_NAME@ extends ClassLoader {
 	private static int loadersCount;
 	private static URLClassLoader[] loaders;
-	private static final Random rand = new Random();
+	private static final Random rand = Config.get.getRandom();
 	
 	static {
 		String loadersPerProjectStr = System.getenv(\"LOADERS_PER_PROJECT\");
