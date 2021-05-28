@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export JAVA_TOOL_OPTIONS=-agentpath:/opt/overops/takipi/lib/libTakipiAgent.so=takipi.debug.logconsole
 command="/opt/overops/$COLOR/run.sh --run-in-container "
 
 if [[ -n "${RUNNING_DURATION_HOURS}" ]]; then 
