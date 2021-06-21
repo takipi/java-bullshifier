@@ -97,12 +97,13 @@ public class Main
 		}
 		
 		System.out.println(String.format(
-			"(Exceptions: %d) (Interval: %dms) (Warmup: %dms) (Threads: %d) (%s stacktraces) (sticky path: %s) (event spot: %s)",
+			"(Exceptions: %d) (Interval: %dms) (Warmup: %dms) (Threads: %d) (%s stacktraces) (sticky path: %s) (event spot: %s) (seed: %d)",
 			exceptionsCount, intervalMillis, warmupMillis, 
 			singleThread ? 1 : threadCount,
 			hideStackTraces ? "hide" : "show",
 			Config.get().getStickyPathsDir(),
-			Config.get().getEventSpotDir()));
+			Config.get().getEventSpotDir(),
+			parseLong(cmd.getOptionValue("seed"), 0)));
 		
 		long startMillis = System.currentTimeMillis();
 		long warmupMillisTotal = 0l;

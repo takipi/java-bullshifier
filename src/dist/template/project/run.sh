@@ -21,6 +21,7 @@ declare extraJVMArgs=""
 declare sleepSeconds=0
 declare appType="Undefined"
 declare appUuid="ffffffff-ffff-ffff-ffff-ffffffffffff"
+declare seed=0
 
 function parse_command_line()
 {
@@ -59,6 +60,9 @@ function parse_command_line()
 
 	params_add "sleep-seconds" "ss" "$sleepSeconds" "sleepSeconds" "expect_value" \
 			"Seconds to wait before starting a new app"
+
+	params_add "seed" "s" "$seed" "seed" "expect_value" \
+			"Seed for randomization within the app"
 
 	if ! params_parse_command_line $@; then
 		params_usage "Bullshifier run usage:"
@@ -129,9 +133,12 @@ function run_bullshifiers()
 		local durationPlan="--run-count $runningCount --exceptions-count $exceptionCount --interval-millis $intervalMillis"
 		local behaviourPlan="--sticky-path $appDataDir/stack-traces --events-spot $appDataDir/errors"
 		local appConfig="--single-thread --hide-stacktraces --warmup-millis 0 --frames-range 50"
+		if [ "$seed" != "0" ];then
+			appConfig+=" --seed $seed"
+		fi
 		local jvmInternalParams="-XX:CICompilerCount=2 -XX:ParallelGCThreads=1"
 		local command="$JAVA_HOME/bin/java $jvmInternalParams -Dapp.uuid=$appUuid $nameParams $javaHeapSize -jar $jarName $durationPlan $behaviourPlan $appConfig"
-		
+
 		if [ "$dryRun" == "false" ]; then
 			if [ "$runInContainer" == "true" ]; then
 				$command
