@@ -15,6 +15,10 @@ if [[ -n "${INERVAL_MILLIS}" ]]; then
         command+="--interval-millis $INERVAL_MILLIS "
 fi
 
+if [[ -n "${APP_SEED}" ]]; then
+        command+="--seed $APP_SEED "
+fi
+
 echo "About to run:"
 echo "$command"
 
