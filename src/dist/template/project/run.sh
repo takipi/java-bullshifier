@@ -118,13 +118,23 @@ function run_bullshifiers()
 	for ((i=1;i<=$processesCount;i++)); do
 		local serverIndex=$(($i%$serversCount))
 		local serverName="${hostnamePrefix}$serverIndex"
+		if [ ! -z ${TAKIPI_SERVER_NAME} ]; then
+			serverName=${TAKIPI_SERVER_NAME}
+		fi
 		local appIndex=$(($i%$appsCount))
 		local appName="$appType-$appIndex"
-		
+		if [ ! -z ${TAKIPI_APPLICATION_NAME} ]; then
+			appName=${TAKIPI_APPLICATION_NAME}
+		fi
+
 		local appDataDir="$emulatorDataDir/$appName"
 		mkdir -p "$appDataDir"
 		
 		local deploymentName=$(get_deployment_name $appName $appDataDir)
+		if [ ! -z ${TAKIPI_DEPLOYMENT_NAME} ]; then
+			deploymentName=${TAKIPI_DEPLOYMENT_NAME}
+		fi
+
 		appDataDir="$appDataDir/$deploymentName"
 		
 		local nameParams="-Dtakipi.server.name=$serverName -Dtakipi.name=$appName -Dtakipi.deployment.name=$deploymentName"
