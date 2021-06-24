@@ -79,3 +79,6 @@ The following table lists the configurable ENVS of the Java Bullshifier using `-
 | `INERVAL_MILLIS`         |  Interval between events (millis)                                 | `300`                               |
 | `GEN_SEED`         |  (Optional) Numerical value used to seed random functions when generating Java Application  |                                |
 | `APP_SEED`         |  (Optional) Numerical value used to seed random functions when running the generated application  |                                |
+| `TAKIPI_SERVER_NAME`          | Override the server name used by the agent | `hostname` joined with index |
+| `TAKIPI_APPLICATION_NAME`     | Override the application name used by the agent | `tester` or what is provided during gradle run with the `name` option |
+| `TAKIPI_DEPLOYMENT_NAME`      | Override the deployment name used by the agent | hostname joined with app name and deployment seed/process count |
