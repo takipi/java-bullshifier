@@ -137,7 +137,7 @@ function run_bullshifiers()
 
 		appDataDir="$appDataDir/$deploymentName"
 		
-		local nameParams="-Dtakipi.server.name=$serverName -Dtakipi.name=$appName -Dtakipi.deployment.name=$deploymentName"
+		local nameParams="-Dtakipi.server.name=$serverName -Dtakipi.application.name=$appName -Dtakipi.deployment.name=$deploymentName"
 		local javaHeapSize="-Xmx$processHeapSize -Xms$processHeapSize"
 		local jarName="$script_dir/build/libs/${appType}.jar"
 		local durationPlan="--run-count $runningCount --exceptions-count $exceptionCount --interval-millis $intervalMillis"
