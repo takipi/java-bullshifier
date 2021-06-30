@@ -121,6 +121,12 @@ function run_bullshifiers()
 		if [ ! -z ${TAKIPI_SERVER_NAME} ]; then
 			serverName=${TAKIPI_SERVER_NAME}
 		fi
+
+		local environmentName=""
+		if [ ! -z ${TAKIPI_ENV_ID} ]; then
+			environmentName=${TAKIPI_ENV_ID}
+		fi
+
 		local appIndex=$(($i%$appsCount))
 		local appName="$appType-$appIndex"
 		if [ ! -z ${TAKIPI_APPLICATION_NAME} ]; then
@@ -137,7 +143,7 @@ function run_bullshifiers()
 
 		appDataDir="$appDataDir/$deploymentName"
 		
-		local nameParams="-Dtakipi.server.name=$serverName -Dtakipi.name=$appName -Dtakipi.deployment.name=$deploymentName"
+		local nameParams="-Dtakipi.server.name=$serverName -Dtakipi.application.name=$appName -Dtakipi.deployment.name=$deploymentName -Dtakipi.env.id=$environmentName"
 		local javaHeapSize="-Xmx$processHeapSize -Xms$processHeapSize"
 		local jarName="$script_dir/build/libs/${appType}.jar"
 		local durationPlan="--run-count $runningCount --exceptions-count $exceptionCount --interval-millis $intervalMillis"
