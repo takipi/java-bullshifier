@@ -2,7 +2,7 @@ FROM openjdk:8-jdk-slim
 LABEL maintainer="support@overops.com"
 
 # Install curl
-RUN apt-get update && apt-get -y install curl
+RUN apt-get update
 
 RUN groupadd --gid 1000 overops
 RUN adduser --home /opt/overops --uid 1000 --gid 1000 overops
@@ -13,10 +13,9 @@ USER 1000:1000
 # Copy bullshier atrifacts
 WORKDIR /opt/overops
 
-# Download agent
-ARG AGENT_VERSION=latest
-ARG AGENT_URL=https://s3.amazonaws.com/app-takipi-com/deploy/linux/takipi-agent
-RUN curl -sL ${AGENT_URL}-${AGENT_VERSION}.tar.gz | tar -xvzf -
+# Install the agent
+COPY takipi-agent-native.tar.gz ./
+RUN tar -xvzf ./takipi-agent-native.tar.gz
 
 # Copy source code to container
 COPY --chown=1000:1000 ./gradle ./gradle.sh
