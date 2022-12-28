@@ -1,21 +1,22 @@
 FROM openjdk:8-jdk-slim
-LABEL maintainer="support@overops.com"
+LABEL maintainer="support@harness.io"
+ARG AGENT_FILENAME=harness.tar.gz
 
 # Install curl
 RUN apt-get update
 
-RUN groupadd --gid 1000 overops
-RUN adduser --home /opt/overops --uid 1000 --gid 1000 overops
+RUN groupadd --gid 1000 harness
+RUN adduser --home /opt/harness --uid 1000 --gid 1000 harness
 
-# Run as overops user
+# Run as harness user
 USER 1000:1000
 
 # Copy bullshier atrifacts
-WORKDIR /opt/overops
+WORKDIR /opt/harness
 
 # Install the agent
-COPY takipi-agent-native.tar.gz ./
-RUN tar -xvzf ./takipi-agent-native.tar.gz
+COPY ${AGENT_FILENAME} ./
+RUN tar -xvzf ./${AGENT_FILENAME}
 
 # Copy source code to container
 COPY --chown=1000:1000 ./gradle ./gradle.sh
@@ -41,8 +42,7 @@ ENV INERVAL_MILLIS=300
 ENV RUNNING_DURATION_HOURS=0
 ENV RUNNING_DURATION_MINUTES=5
 ENV COLOR=white
-ENV TAKIPI_COLLECTOR_HOST=collector
-ENV TAKIPI_COLLECTOR_PORT=6060
+ENV ET_COLLECTOR_URL=http://collector:6060
 ENV IS_DAEMON=true
 
 ENTRYPOINT ["/bin/bash", "./start.sh"]
