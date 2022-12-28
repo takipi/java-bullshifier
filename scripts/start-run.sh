@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export JAVA_TOOL_OPTIONS=-agentpath:/opt/harness/lib/libETAgent.so=debug.logconsole
+export JAVA_TOOL_OPTIONS=-agentpath:/opt/harness/harness/lib/libETAgent.so=debug.logconsole
 command="/opt/harness/$COLOR/run.sh --run-in-container "
 
 if [[ -n "${RUNNING_DURATION_HOURS}" ]]; then
